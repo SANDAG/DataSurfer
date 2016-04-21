@@ -34,10 +34,16 @@ class Query {
     public function getDatasourceId($datasource, $year)
     {
         $columns = ["forecast" => "ds.series", "census"=>"yr.yr", "estimate"=>"yr.yr"];
-        
+		
+		if($datasource == "censusacs"){
+			$datasource = "census";
+			
         $sql = "SELECT ds.datasource_id FROM dim.datasource ds INNER JOIN dim.datasource_type ds_type ON ds.datasource_type_id = ds_type.datasource_type_id"
                 .($datasource !== "forecast" ? " INNER JOIN dim.forecast_year yr ON ds.datasource_id = yr.datasource_id" : "")
                 ." WHERE lower(ds_type.datasource_type) = lower($1) and {$columns[$datasource]} = $2 AND ds.is_active ORDER BY 1";
+			$sql = "SELECT datasource_id FROM dim.datasource ds INNER JOIN dim.datasource_type dsType ON ds.datasource_type_id = dsType.datasource_type_id WHERE lower(datasource_type) = lower($1) AND {$columns[$datasource]} = $2 AND is_active";
+		}
+		
         
         $db = pg_connect("dbname={$this->database} host={$this->db_server} user={$this->uid} password={$this->pwd}");
         $result = pg_query_params($db, $sql, array($datasource, $year));
