@@ -91,17 +91,6 @@ $app->get('/:datasource', function ($datasource) use ($app)
     
 })->conditions(array('datasource' => 'census|forecast|estimate'));
 
-$app->get('/:datasource', function ($datasource) use ($app)
-	{
-		$labels = ["censusacs"=>"year"];
-		$columns = ["censusacs"=>"yr"];
-
-		$sql = "SELECT {$columns[$datasource]}  as {$labels[$datasource]}  FROM dim.datasource WHERE name like  ($1) ORDER BY 1;";
-		
-		echo Query::getInstance()->getYearsAsJson($sql, '%ACS');
-		
-	})->conditions(array('datasource' => 'censusacs'));
-
 $app->get('/:datasource/:year', function ($datasource, $year) use ($app)
 {
     $datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
@@ -113,7 +102,7 @@ $app->get('/:datasource/:year', function ($datasource, $year) use ($app)
 
     echo Query::getInstance()->getGeoTypeAsArray($datasource_id);
 
-	})->conditions(array('datasource' => 'census|censusacs|forecast|estimate', 'year' => '(\d){2,4}'));
+	})->conditions(array('datasource' => 'census|forecast|estimate', 'year' => '(\d){2,4}'));
 
 //Get Information - Zone Names for Geotype
 $app->get('/:datasource/:year/:geotype', function ($datasource, $series, $geotype) use ($app)
@@ -158,7 +147,7 @@ $app->get('/:datasource/:year/:geotype', function ($datasource, $series, $geotyp
     
     echo json_encode($json);
 	
-	})->conditions(array('datasource' => 'census|censusacs|forecast|estimate', 'year' => '(\d){2,4}'));
+	})->conditions(array('datasource' => 'census|forecast|estimate', 'year' => '(\d){2,4}'));
 
  //Census / Estimate - Housing
 $app->get('/:datasource/:year/:geotype/:zone/housing', function ($datasource, $year, $geotype, $zone) use ($app)
@@ -176,7 +165,7 @@ $app->get('/:datasource/:year/:geotype/:zone/housing', function ($datasource, $y
 
 		echo $json;
 		
-	})->conditions(array('datasource' => 'forecast|census|censusacs|estimate', 'year' => '(\d){2,4}'));
+	})->conditions(array('datasource' => 'forecast|census|estimate', 'year' => '(\d){2,4}'));
 
 //Census / Estimate - Population
 $app->get('/:datasource/:year/:geotype/:zone/population', function ($datasource, $year, $geotype, $zone) use ($app)
@@ -194,7 +183,7 @@ $app->get('/:datasource/:year/:geotype/:zone/population', function ($datasource,
 
 		echo $json;
 		
-	})->conditions(array('datasource' => 'forecast|census|censusacs|estimate', 'year' => '(\d){2,4}'));
+	})->conditions(array('datasource' => 'forecast|census|estimate', 'year' => '(\d){2,4}'));
 
 //Census / Estimate - Ethnicity
 $app->get('/:datasource/:year/:geotype/:zone/ethnicity', function ($datasource, $year, $geotype, $zone) use ($app)
@@ -211,7 +200,7 @@ $app->get('/:datasource/:year/:geotype/:zone/ethnicity', function ($datasource, 
 		$json = Query::getInstance()->getResultAsJson($sql, $datasource_id, $geotype, $zone); 
 
 		echo $json;
-	})->conditions(array('datasource' => 'forecast|census|censusacs|estimate', 'year' => '(\d){2,4}'));
+	})->conditions(array('datasource' => 'forecast|census|estimate', 'year' => '(\d){2,4}'));
 
 //Census / Estimate - Age
 $app->get('/:datasource/:year/:geotype/:zone/age', function ($datasource, $year, $geotype, $zone) use ($app)
@@ -228,7 +217,7 @@ $app->get('/:datasource/:year/:geotype/:zone/age', function ($datasource, $year,
 		$json = Query::getInstance()->getResultAsJson($sql, $datasource_id, $geotype, $zone); 
 
 		echo $json;
-	})->conditions(array('datasource' => 'forecast|census|censusacs|estimate', 'year' => '(\d){2,4}'));
+	})->conditions(array('datasource' => 'forecast|census|estimate', 'year' => '(\d){2,4}'));
 
 //Census / Estimate - Income
 $app->get('/:datasource/:year/:geotype/:zone/income', function ($datasource, $year, $geotype, $zone) use ($app)
@@ -245,7 +234,7 @@ $app->get('/:datasource/:year/:geotype/:zone/income', function ($datasource, $ye
 		$json = Query::getInstance()->getResultAsJson($sql, $datasource_id, $geotype, $zone); 
 
 		echo $json;
-	})->conditions(array('datasource' => 'forecast|census|censusacs|estimate', 'year' => '(\d){2,4}'));
+	})->conditions(array('datasource' => 'forecast|census|estimate', 'year' => '(\d){2,4}'));
 
 $app->get('/:datasource/:year/:geotype/:zone/income/median', function ($datasource, $year, $geotype, $zone) use ($app)
 	{
@@ -261,7 +250,7 @@ $app->get('/:datasource/:year/:geotype/:zone/income/median', function ($datasour
 		$json = Query::getInstance()->getResultAsJson($sql, $datasource_id, $geotype, $zone); 
 
 		echo $json;
-	})->conditions(array('datasource' => 'forecast|census|censusacs|estimate', 'year' => '(\d){2,4}'));
+	})->conditions(array('datasource' => 'forecast|census|estimate', 'year' => '(\d){2,4}'));
 
 $app->get('/:datasource/:year/:geotype/all/export/pdf', function($datasource, $year, $geoType) use ($app)
 	{
@@ -293,7 +282,6 @@ $app->get('/:datasource/:year/:geotype/all/export/pdf', function($datasource, $y
 
 $app->map('/:datasource/:year/:geotype/:zones+/export/pdf', function($datasource, $year, $geoType, $zones) use ($app)
 	{
-	
 		if (1 == count($zones))
 		{
 			$zone = $zones[0];
@@ -358,7 +346,7 @@ $app->map('/:datasource/:year/:geotype/:zones+/export/pdf', function($datasource
 			
 			unlink($sys_file_name);
 		}
-	})->via('GET', 'POST')->conditions(array('datasource' => 'census|censusacs|forecast|estimate', 'year' => '(\d){2,4}'));
+	})->via('GET', 'POST')->conditions(array('datasource' => 'census|forecast|estimate', 'year' => '(\d){2,4}'));
 
 $app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, $year, $geotype) use ($app)
 {
@@ -903,34 +891,14 @@ $app->get('/:program/:series/:geotype/:zone/map', function ($datasource, $series
 		
 })->conditions(array('datasource' => 'census|forecast|estimate', 'series' => '(\d){2,4}'));
 
-//CensusACS / Estimate - Means of Transportation to Work
+//Census - Means of Transportation to Work
 $app->get('/:datasource/:year/:geotype/:zone/transportation', function ($datasource, $year, $geotype, $zone) use ($app)
 	{
 		$datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
 		
 		if (!$datasource_id)
 		$app->halt(400, 'Invalid year or series id');
-		/*$transportationtoWorkSql = " select  geography_zone {$geotype} ,{$year} Yearnumber,
-					unnest(array[
-						'Drove Alone',
-						'Carpooled',
-						'Public Transportation' ,
-						'Motorcycle' ,
-						'Bicycle',
-						'Walked',
-						'Other means',
-						'Worked at home' ]) AS means_of_trans,	
-					unnest(array[
-					emp_mode_auto_drive_alone,
-					emp_mode_auto_carpool,
-					emp_mode_transit,
-					emp_mode_motor,
-					emp_mode_bike,
-					emp_mode_walk,
-					emp_mode_others,
-					emp_mode_home
-					]) as Number
-					from app.acs_means_of_trans($1, $2, $3 );";*/
+		
 		$transportationtoWorkSql = " select  geography_zone {$geotype} ,{$year} Yearnumber,
 					unnest(array[
 						'Drive Alone',
@@ -958,36 +926,14 @@ $app->get('/:datasource/:year/:geotype/:zone/transportation', function ($datasou
 		echo $json;		
 		
 	})->conditions(array('datasource' => 'census', 'year' => '(\d){2,4}'));
-//CensusACS - Employment Status
+//Census - Employment Status
 $app->get('/:datasource/:year/:geotype/:zone/employmentstatus', function ($datasource, $year, $geotype, $zone) use ($app)
 	{
 		$datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
 		
 		if (!$datasource_id)
 		$app->halt(400, 'Invalid year or series id');
-		/*$employmentStatusSql = "select '$zone' as {$geotype} ,{$year}  Yearnumber,
-			unnest( array[ 'Population age 16 and older',
-				'In labor force',
-				'Armed forces',
-				'Civilian(employed)',
-				'Civilian(unemployed)',
-				'Not in labor force'])
-				as Status,			
-			unnest(	array[ pop_16plus_male,
-				in_labor_force_male,
-				in_armed_forces_male,
-				emp_civ_male,
-				unemployed_male,
-				not_in_labor_force_male])	
-				as male,
-			unnest(	array[ pop_16plus_female,
-				in_labor_force_female,
-				in_armed_forces_female,
-				emp_civ_female,
-				unemployed_female,
-				not_in_labor_force_female])	
-				as female
-			from app.acs_employment_status_acs( $1, $2, $3);";*/
+	
 		$employmentStatusSql = "select '$zone' as {$geotype} ,{$year}  Yearnumber,
 			unnest( array[ 'Population age 16 and older',
 				
@@ -1020,7 +966,7 @@ $app->get('/:datasource/:year/:geotype/:zone/employmentstatus', function ($datas
 		echo $json;
 	})->conditions(array('datasource' => 'census', 'year' => '(\d){2,4}'));
 	
-//CensusACS / Estimate - Poverty Status
+//Census / Estimate - Poverty Status
 $app->get('/:datasource/:year/:geotype/:zone/povertystatus', function ($datasource, $year, $geotype, $zone) use ($app)
 	{
 		$datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
@@ -1046,7 +992,7 @@ $app->get('/:datasource/:year/:geotype/:zone/povertystatus', function ($datasour
 		}
 		echo $json;		
 	})->conditions(array('datasource' => 'census', 'year' => '(\d){2,4}'));
-//CensusACS / Estimate -Educational Attainment
+//Census / Estimate -Educational Attainment
 $app->get('/:datasource/:year/:geotype/:zone/education', function ($datasource, $year, $geotype, $zone) use ($app)
 	{
 		$datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
