@@ -91,6 +91,7 @@ $app->get('/:datasource', function ($datasource) use ($app)
     
 })->conditions(array('datasource' => 'census|forecast|estimate'));
 
+
 $app->get('/:datasource/:year', function ($datasource, $year) use ($app)
 {
     $datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
@@ -1195,7 +1196,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($raceEthnicityZoneArray)) {	
 					
 					foreach($raceEthnicityZoneArray as $arr){
-						$raceEthnicityArray[$raceEthnicityIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['ethnicity_short_name'], $arr['population']];
+						$raceEthnicityArray[$raceEthnicityIterator++] = [$arr[$geoType], $arr['year'], $arr['ethnicity_short_name'], $arr['population']];
 					}
 				}
 
@@ -1207,7 +1208,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($ageSexZoneArray)) {	
 					
 					foreach($ageSexZoneArray as $arr)
-						$ageSexArray[$ageSexIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['age_group_name'], $arr['total'], $arr['male'], $arr['female']];
+						$ageSexArray[$ageSexIterator++] = [$arr[$geoType], $arr['year'], $arr['age_group_name'], $arr['total'], $arr['male'], $arr['female']];
 				}
 				// add median age to ageSexArray
 				$ageSexMedian_file_name = strtolower(join("_", array('ageSexMedian', "censusacs", $year, $geoType, $zone)).".json");
@@ -1217,7 +1218,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($ageSexMedianZoneArray)) {	
 					
 					foreach($ageSexMedianZoneArray as $arr)
-						$ageSexArray[$ageSexIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['medianage'], $arr['median_age'], $arr['median_age_male'], $arr['median_age_female']];
+						$ageSexArray[$ageSexIterator++] = [$arr[$geoType], $arr['year'], $arr['medianage'], $arr['median_age'], $arr['median_age_male'], $arr['median_age_female']];
 				}
 				//
 				//******* 3.  MARITAL STATUS***************************************
@@ -1227,7 +1228,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($maritalStatusZoneArray)) {	
 					
 					foreach($maritalStatusZoneArray as $arr)
-						$maritalStatusArray[$maritalStatusIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['maritalstatus'], $arr['number']];
+						$maritalStatusArray[$maritalStatusIterator++] = [$arr[$geoType], $arr['year'], $arr['maritalstatus'], $arr['number']];
 				}
 				//******* 4 HouseholdGroupQuarters***************************************
 				$householdGroupQtrs_file_name = strtolower(join("_", array('householdGroupQtrs', "censusacs", $year, $geoType, $zone)).".json");
@@ -1236,7 +1237,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($householdGroupQtrsZoneArray)) {	
 					
 					foreach($householdGroupQtrsZoneArray as $arr)
-						$householdGroupQtrsArray[$householdGroupQtrsIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['housing_type'], $arr['population']];
+						$householdGroupQtrsArray[$householdGroupQtrsIterator++] = [$arr[$geoType], $arr['year'], $arr['housing_type'], $arr['population']];
 				}		
 				//******* 5. Age, Race-Ethnicity***************************************
 				$ethnicityAgeGroup_file_name = strtolower(join("_", array('ethnicityAgeGroup', "censusacs", $year, $geoType, $zone)).".json");
@@ -1245,7 +1246,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($ethnicityAgeGroupZoneArray)) {	
 					
 					foreach($ethnicityAgeGroupZoneArray as $arr)
-						$ethnicityAgeGroupArray[$ethnicityAgeGroupIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['age_group_name'], $arr['Hispanic'], $arr['White'], $arr['Black'], $arr['American Indian']	, $arr['Asian'], $arr['Pacific Islander'], $arr['Other'], $arr['Two or More']]; 
+						$ethnicityAgeGroupArray[$ethnicityAgeGroupIterator++] = [$arr[$geoType], $arr['year'], $arr['age_group_name'], $arr['Hispanic'], $arr['White'], $arr['Black'], $arr['American Indian']	, $arr['Asian'], $arr['Pacific Islander'], $arr['Other'], $arr['Two or More']]; 
 					
 				}		
 				//median age
@@ -1255,7 +1256,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($ethnicityAgeGroupMedianZoneArray)) {	
 					
 					foreach($ethnicityAgeGroupMedianZoneArray as $arr)
-						$ethnicityAgeGroupArray[$ethnicityAgeGroupIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['medianage'], $arr['Hispanic'], $arr['White'], $arr['Black'], $arr['American Indian'], $arr['Asian'], $arr['Pacific Islander'], $arr['Other'], $arr['Two or More']]; 			
+						$ethnicityAgeGroupArray[$ethnicityAgeGroupIterator++] = [$arr[$geoType], $arr['year'], $arr['medianage'], $arr['Hispanic'], $arr['White'], $arr['Black'], $arr['American Indian'], $arr['Asian'], $arr['Pacific Islander'], $arr['Other'], $arr['Two or More']]; 			
 				}		
 				
 				//******* 6. LANGUAGE SPOKEN AT HOME***************************************	
@@ -1265,7 +1266,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($languageSpokenZoneArray)) {	
 					
 					foreach($languageSpokenZoneArray as $arr)
-						$languageSpokenArray[$languageSpokenIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['population'], $arr['total']];
+						$languageSpokenArray[$languageSpokenIterator++] = [$arr[$geoType], $arr['year'], $arr['population'], $arr['total']];
 				}
 				//*******7. EDUCATIONAL ATTAINMENT***************************************
 				$educationalAttainment_file_name = strtolower(join("_", array('educationalAttainment', "censusacs", $year, $geoType, $zone)).".json");
@@ -1275,7 +1276,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($educationalAttainmentZoneArray)) {	
 					
 					foreach($educationalAttainmentZoneArray as $arr)
-						$educationalAttainmentArray[$educationalAttainmentIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['level'], $arr['population']];
+						$educationalAttainmentArray[$educationalAttainmentIterator++] = [$arr[$geoType], $arr['year'], $arr['level'], $arr['population']];
 				}
 				//*******8.  SchoolEnrollment***************************************
 				$schoolEnrollment_file_name = strtolower(join("_", array('schoolEnrollment', "censusacs", $year, $geoType, $zone)).".json");
@@ -1285,7 +1286,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($schoolEnrollmentZoneArray)) {	
 					
 					foreach($schoolEnrollmentZoneArray as $arr)
-						$schoolEnrollmentArray[$schoolEnrollmentIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['description'], $arr['total'], $arr['public'], $arr['private']];
+						$schoolEnrollmentArray[$schoolEnrollmentIterator++] = [$arr[$geoType], $arr['year'], $arr['description'], $arr['total'], $arr['public'], $arr['private']];
 				}
 				//******* 10 Households by Type and Presence of Children Under 18************	
 				$householdsTypeByUnder18_file_name = strtolower(join("_", array('householdsTypeByUnder18', "censusacs", $year, $geoType, $zone)).".json");
@@ -1295,7 +1296,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($householdsTypeByUnder18ZoneArray)) {	
 					
 					foreach($householdsTypeByUnder18ZoneArray as $arr)
-						$householdsTypeByUnder18Array[$householdsTypeByUnder18Iterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['familytype'], $arr['total'], $arr['withpersonsunder18'], $arr['withoutpersonsunder18']];
+						$householdsTypeByUnder18Array[$householdsTypeByUnder18Iterator++] = [$arr[$geoType], $arr['year'], $arr['familytype'], $arr['total'], $arr['withpersonsunder18'], $arr['withoutpersonsunder18']];
 				}	
 				//******* 11. HousingUnitsType***************************************	
 				$housingUnitsType_file_name = strtolower(join("_", array('housingUnitsType', "censusacs", $year, $geoType, $zone)).".json");
@@ -1305,7 +1306,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($housingUnitsTypeZoneArray)) {	
 					
 					foreach($housingUnitsTypeZoneArray as $arr)
-						$housingUnitsTypeArray[$housingUnitsTypeIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['structure_type'], $arr['units'], $arr['occupied'], $arr['percent_of_units']];
+						$housingUnitsTypeArray[$housingUnitsTypeIterator++] = [$arr[$geoType], $arr['year'], $arr['structure_type'], $arr['units'], $arr['occupied'], $arr['percent_of_units']];
 				}
 				//******* 12.  HOUSING VALUE***************************************
 				$housingValue_file_name = strtolower(join("_", array('housingValue', "censusacs", $year, $geoType, $zone)).".json");
@@ -1315,7 +1316,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($housingValueZoneArray)) {	
 					
 					foreach($housingValueZoneArray as $arr)
-						$housingValueArray[$housingValueIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['description'], $arr['total']];
+						$housingValueArray[$housingValueIterator++] = [$arr[$geoType], $arr['year'], $arr['description'], $arr['total']];
 				}
 				// need median value here
 				$housingValueMedian_file_name = strtolower(join("_", array('housingValueMedian', "censusacs", $year, $geoType, $zone)).".json");
@@ -1325,7 +1326,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($housingValueMedianZoneArray)) {	
 					
 					foreach($housingValueMedianZoneArray as $arr)
-						$housingValueArray[$housingValueIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['medianvalue'], $arr['median_housing_value']];
+						$housingValueArray[$housingValueIterator++] = [$arr[$geoType], $arr['year'], $arr['medianvalue'], $arr['median_housing_value']];
 				}
 				//
 				//******* 13. Yr House Built***************************************			
@@ -1336,7 +1337,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($yrHouseBuiltZoneArray)) {	
 					
 					foreach($yrHouseBuiltZoneArray as $arr)
-						$yrHouseBuiltArray[$yrHouseBuiltIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['yearbuilt'], $arr['builtnumber']];
+						$yrHouseBuiltArray[$yrHouseBuiltIterator++] = [$arr[$geoType], $arr['year'], $arr['yearbuilt'], $arr['builtnumber']];
 				}
 				//******* 14. House Tenure and OccupRoom ***************************************
 				$houseTenureOccupied_file_name = strtolower(join("_", array('houseTenureOccupied', "censusacs", $year, $geoType, $zone)).".json");
@@ -1346,7 +1347,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($houseTenureOccupiedZoneArray)) {	
 					
 					foreach($houseTenureOccupiedZoneArray as $arr)
-						$houseTenureOccupiedArray[$houseTenureOccupiedIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['occupants'], $arr['total'], $arr['renter'], $arr['owner']];
+						$houseTenureOccupiedArray[$houseTenureOccupiedIterator++] = [$arr[$geoType], $arr['year'], $arr['occupants'], $arr['total'], $arr['renter'], $arr['owner']];
 				}
 				//******* 15. ContractRent***************************************	
 				$contractRent_file_name = strtolower(join("_", array('contractRent', "censusacs", $year, $geoType, $zone)).".json");
@@ -1356,7 +1357,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($contractRentZoneArray)) {	
 					
 					foreach($contractRentZoneArray as $arr)
-						$contractRentArray[$contractRentIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['cost'], $arr['number']];
+						$contractRentArray[$contractRentIterator++] = [$arr[$geoType], $arr['year'], $arr['cost'], $arr['number']];
 				}
 				// contract rent median
 				$contractRentMedian_file_name = strtolower(join("_", array('contractRentMedian', "censusacs", $year, $geoType, $zone)).".json");
@@ -1366,7 +1367,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($contractRentMedianZoneArray)) {	
 					
 					foreach($contractRentMedianZoneArray as $arr)
-						$contractRentArray[$contractRentIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['mediancontractrent'], $arr['median_contract_rent']];
+						$contractRentArray[$contractRentIterator++] = [$arr[$geoType], $arr['year'], $arr['mediancontractrent'], $arr['median_contract_rent']];
 				}
 				//******* 16. Gross Rent Household Income***************************************
 				$grossRentHouseholdIncome_file_name = strtolower(join("_", array('grossRentHouseholdIncome', "censusacs", $year, $geoType, $zone)).".json");
@@ -1376,7 +1377,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($grossRentHouseholdIncomeZoneArray)) {	
 					
 					foreach($grossRentHouseholdIncomeZoneArray as $arr)
-						$grossRentHouseholdIncomeArray[$grossRentHouseholdIncomeIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['percentage'], $arr['number']];
+						$grossRentHouseholdIncomeArray[$grossRentHouseholdIncomeIterator++] = [$arr[$geoType], $arr['year'], $arr['percentage'], $arr['number']];
 				}
 				//******* 17. Vehicle Availability***************************************
 				$vehicleAvailability_file_name = strtolower(join("_", array('vehicleAvailability', "censusacs", $year, $geoType, $zone)).".json");
@@ -1386,7 +1387,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($vehicleAvailabilityZoneArray)) {	
 					
 					foreach($vehicleAvailabilityZoneArray as $arr)
-						$vehicleAvailabilityArray[$vehicleAvailabilityIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['availability'], $arr['number']];
+						$vehicleAvailabilityArray[$vehicleAvailabilityIterator++] = [$arr[$geoType], $arr['year'], $arr['availability'], $arr['number']];
 				}
 				//******* 18 Place of work( CountyLevel) ***************************************
 				$placeofWork_file_name = strtolower(join("_", array('placeofWork', "censusacs", $year, $geoType, $zone)).".json");
@@ -1396,7 +1397,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($placeofWorkZoneArray)) {	
 					
 					foreach($placeofWorkZoneArray as $arr)
-						$placeofWorkArray[$placeofWorkIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['placeofwork'], $arr['number']];
+						$placeofWorkArray[$placeofWorkIterator++] = [$arr[$geoType], $arr['year'], $arr['placeofwork'], $arr['number']];
 				}
 				//******* 19 Transportation to Work ***************************************
 				$transportationtoWork_file_name = strtolower(join("_", array('transportationtoWork', "censusacs", $year, $geoType, $zone)).".json");
@@ -1406,7 +1407,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($transportationtoWorkZoneArray)){
 					
 					foreach($transportationtoWorkZoneArray as $arr)
-						$transportationtoWorkArray[$transportationtoWorkIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['means_of_trans'], $arr['number']];
+						$transportationtoWorkArray[$transportationtoWorkIterator++] = [$arr[$geoType], $arr['year'], $arr['means_of_trans'], $arr['number']];
 				}
 				//******* 20 Travel Time to Work ***************************************
 				$travelTimetoWork_file_name = strtolower(join("_", array('travelTimetoWork', "censusacs", $year, $geoType, $zone)).".json");
@@ -1416,7 +1417,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($travelTimetoWorkZoneArray)){
 					
 					foreach($travelTimetoWorkZoneArray as $arr)
-						$travelTimetoWorkArray[$travelTimetoWorkIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['traveltime'], $arr['number']];
+						$travelTimetoWorkArray[$travelTimetoWorkIterator++] = [$arr[$geoType], $arr['year'], $arr['traveltime'], $arr['number']];
 				}
 				// average time to work
 				$travelTimetoWorkAverage_file_name = strtolower(join("_", array('travelTimetoWorkAverage', "censusacs", $year, $geoType, $zone)).".json");
@@ -1426,7 +1427,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($travelTimetoWorkAverageZoneArray)){
 					
 					foreach($travelTimetoWorkAverageZoneArray as $arr)
-						$travelTimetoWorkArray[$travelTimetoWorkIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['averagetimetowork'], $arr['acs_avg_travel_time_to_work']];
+						$travelTimetoWorkArray[$travelTimetoWorkIterator++] = [$arr[$geoType], $arr['year'], $arr['averagetimetowork'], $arr['acs_avg_travel_time_to_work']];
 				}
 				//******* 21 Employment Status ***************************************
 				$employmentStatus_file_name = strtolower(join("_", array('employmentStatus', "censusacs", $year, $geoType, $zone)).".json");
@@ -1436,7 +1437,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($employmentStatusZoneArray)){
 					
 					foreach($employmentStatusZoneArray as $arr)
-						$employmentStatusArray[$employmentStatusIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['status'], $arr['male'], $arr['female']];
+						$employmentStatusArray[$employmentStatusIterator++] = [$arr[$geoType], $arr['year'], $arr['status'], $arr['male'], $arr['female']];
 				}
 				//******* 22 Occupation ***************************************
 				$occupation_file_name = strtolower(join("_", array('occupation', "censusacs", $year, $geoType, $zone)).".json");
@@ -1446,7 +1447,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($occupationZoneArray)){
 					
 					foreach($occupationZoneArray as $arr)
-						$occupationArray[$occupationIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['occupation'], $arr['total']];
+						$occupationArray[$occupationIterator++] = [$arr[$geoType], $arr['year'], $arr['occupation'], $arr['total']];
 				}
 				//******* 23 Industry ***************************************
 				$industry_file_name = strtolower(join("_", array('industry', "censusacs", $year, $geoType, $zone)).".json");
@@ -1456,7 +1457,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($industryZoneArray)){
 					
 					foreach($industryZoneArray as $arr)
-						$industryArray[$industryIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['industry'], $arr['number']];
+						$industryArray[$industryIterator++] = [$arr[$geoType], $arr['year'], $arr['industry'], $arr['number']];
 				}
 				//******* 24 Household Income ***************************************
 				$householdIncome_file_name = strtolower(join("_", array('householdIncome', "censusacs", $year, $geoType, $zone)).".json");
@@ -1466,7 +1467,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($householdIncomeZoneArray)){
 					
 					foreach($householdIncomeZoneArray as $arr)
-						$householdIncomeArray[$householdIncomeIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['income_group_name'], $arr['households']];
+						$householdIncomeArray[$householdIncomeIterator++] = [$arr[$geoType], $arr['year'], $arr['income_group_name'], $arr['households']];
 				}
 				// median income
 				$householdIncomeMedian_file_name = strtolower(join("_", array('householdIncomeMedian', "censusacs", $year, $geoType, $zone)).".json");
@@ -1476,7 +1477,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($householdIncomeMedianZoneArray)){
 					
 					foreach($householdIncomeMedianZoneArray as $arr)
-						$householdIncomeArray[$householdIncomeIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['medianincome'], $arr['median_inc']];
+						$householdIncomeArray[$householdIncomeIterator++] = [$arr[$geoType], $arr['year'], $arr['medianincome'], $arr['median_inc']];
 				}
 				//******* 25 Earnings and Income ***************************************
 				$earningsAndIncome_file_name = strtolower(join("_", array('earningsAndIncome', "censusacs", $year, $geoType, $zone)).".json");
@@ -1486,7 +1487,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($earningsAndIncomeZoneArray)){
 					
 					foreach($earningsAndIncomeZoneArray as $arr)
-						$earningsAndIncomeArray[$earningsAndIncomeIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['households'], $arr['number']];
+						$earningsAndIncomeArray[$earningsAndIncomeIterator++] = [$arr[$geoType], $arr['year'], $arr['households'], $arr['number']];
 				}
 				//******* 26 Ratio Income to Poverty Level ***************************************
 				$ratioIncomePovertyLevel_file_name = strtolower(join("_", array('ratioIncomePovertyLevel', "censusacs", $year, $geoType, $zone)).".json");
@@ -1496,7 +1497,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($ratioIncomePovertyLevelZoneArray)){
 					
 					foreach($ratioIncomePovertyLevelZoneArray as $arr)
-						$ratioIncomePovertyLevelArray[$ratioIncomePovertyLevelIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['households'], $arr['number']];
+						$ratioIncomePovertyLevelArray[$ratioIncomePovertyLevelIterator++] = [$arr[$geoType], $arr['year'], $arr['households'], $arr['number']];
 				}
 				//******* 27 Poverty Status ***************************************
 				$povertyStatus_file_name = strtolower(join("_", array('povertyStatus', "censusacs", $year, $geoType, $zone)).".json");
@@ -1506,7 +1507,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($povertyStatusZoneArray)){
 					
 					foreach($povertyStatusZoneArray as $arr)
-						$povertyStatusArray[$povertyStatusIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['status'], $arr['number']];
+						$povertyStatusArray[$povertyStatusIterator++] = [$arr[$geoType], $arr['year'], $arr['status'], $arr['number']];
 				}
 				//******* 28 PovertyStatus- FamType Children ***************************************
 				$povertyStatusByFamilyType_file_name = strtolower(join("_", array('povertyStatusByFamilyType', "censusacs", $year, $geoType, $zone)).".json");
@@ -1516,7 +1517,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
 				if (is_array($povertyStatusByFamilyTypeZoneArray)){
 					
 					foreach($povertyStatusByFamilyTypeZoneArray as $arr)
-						$povertyStatusByFamilyTypeArray[$povertyStatusByFamilyTypeIterator++] = [$arr[$geoType], $arr['yearnumber'], $arr['familytype'], $arr['abovepovertywithchildrenunder18'],$arr['abovepovertynochildunder18'],$arr['belowpovertywithchildrenunder18'],$arr['belowpovertynochildunder18']];
+						$povertyStatusByFamilyTypeArray[$povertyStatusByFamilyTypeIterator++] = [$arr[$geoType], $arr['year'], $arr['familytype'], $arr['abovepovertywithchildrenunder18'],$arr['abovepovertynochildunder18'],$arr['belowpovertywithchildrenunder18'],$arr['belowpovertynochildunder18']];
 				}
 				
 			}
