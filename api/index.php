@@ -72,10 +72,14 @@ $app->get('/', function () use ($app)
 
 $app->get('/:datasource', function ($datasource) use ($app)
 {
+    $datasource_type_id = ["census"=>"1","estimate"=>"2","forecast"=>"3"];
+    
     $labels = ["forecast" => "series", "census"=>"year", "estimate"=>"year"];
     $columns = ["forecast" => "series", "census"=>"yr", "estimate"=>"yr"];
 
-	$sql = "SELECT {$columns[$datasource]}  as {$labels[$datasource]} FROM dim.datasource ds INNER JOIN dim.datasource_type dsType ON ds.datasource_type_id = dsType.datasource_type_id WHERE lower(datasource_type) = lower($1) AND is_active ORDER BY 1;";
+    $sql = "SELECT {$columns[$datasource]} as {$labels[$datasource]} FROM dim.datasource ds" 
+        .($datasource !== 'forecast' ? " INNER JOIN dim.forecast_year yr ON ds.datasource_id = yr.datasource_id" : "")
+        ." INNER JOIN dim.datasource_type dsType ON ds.datasource_type_id = dsType.datasource_type_id WHERE lower(datasource_type) = lower($1) AND is_active ORDER BY 1";
 	
 	echo Query::getInstance()->getYearsAsJson($sql, $datasource);
     
