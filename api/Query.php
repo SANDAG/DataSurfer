@@ -34,7 +34,10 @@ class Query {
     public function getDatasourceId($datasource, $year)
     {
         $columns = ["forecast" => "series", "census"=>"yr", "estimate"=>"yr"];
-        $sql = "SELECT datasource_id FROM dim.datasource ds INNER JOIN dim.datasource_type dsType ON ds.datasource_type_id = dsType.datasource_type_id WHERE lower(datasource_type) = lower($1) AND {$columns[$datasource]} = $2 AND is_active";
+        
+        $sql = "SELECT ds.datasource_id FROM dim.datasource ds INNER JOIN dim.datasource_type ds_type ON ds.datasource_type_id = ds_type.datasource_type_id"
+                .($datasource !== "forecast" ? " INNER JOIN dim.forecast_year yr ON ds.datasource_id = yr.datasource_id" : "")
+                ." WHERE lower(ds_type.datasource_type) = lower($1) and {$columns[$datasource]} = $2 AND ds.is_active ORDER BY 1";
         
         $db = pg_connect("dbname={$this->database} host={$this->db_server} user={$this->uid} password={$this->pwd}");
         
@@ -48,12 +51,13 @@ class Query {
         return $datasource_id;
     }
 	
-	public function getZonesAsJson($sql, $series_id, $geotype)
+	public function getZonesAsJson($series_id, $geotype)
 	{
 		$json = array ();
 	
 		$db = pg_connect("dbname={$this->database} host={$this->db_server} user={$this->uid} password={$this->pwd}");
-		 
+		$sql = "select lower(geozone) as {$geotype} from dim.mgra where series = $1 and geotype = $2 group by geozone order by geozone;";
+        
 		$result = pg_query_params($db, $sql, array($series_id, $geotype));
 		$result_array = pg_fetch_all($result);
 		
@@ -130,7 +134,10 @@ class Query {
 	    {
 	    	for($j=0;$j<count($row);$j++)
 	    	{
-	    		if (array_key_exists(pg_field_type($result, $j), $php_to_pg))
+                if (is_null($row[pg_field_name($result, $j)]))
+                {
+                    $row[pg_field_name($result, $j)] = null;
+                } else if (array_key_exists(pg_field_type($result, $j), $php_to_pg))
 	    		{
 	    			$field_type = pg_field_type($result, $j);
 	    			$field_name = pg_field_name($result, $j);
@@ -168,5 +175,24 @@ class Query {
 		
 		return $records;
 	}
+    
+    public function getGeoTypeAsArray($datasource_id)
+    {
+        $json = array ();
+	
+		$db = pg_connect("dbname={$this->database} host={$this->db_server} user={$this->uid} password={$this->pwd}");
+		 
+        $sql = "SELECT geotype as zone FROM dim.mgra mgra INNER JOIN dim.datasource ds ON mgra.series = ds.series WHERE ds.datasource_id = $1 and ds.is_active GROUP BY geotype ORDER BY 1";
+         
+		$result = pg_query_params($db, $sql, array($datasource_id));
+		$result_array = pg_fetch_all($result);
+		
+        $json = json_encode($result_array);
+	 
+        pg_free_result($result);
+	    pg_close($db);
+	 
+        return $json;
+    }
 }
 ?>

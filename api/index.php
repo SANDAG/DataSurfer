@@ -88,25 +88,19 @@ $app->get('/:datasource', function ($datasource) use ($app)
 $app->get('/:datasource/:year', function ($datasource, $year) use ($app)
 {
     $datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
-    
+
 	if(!$datasource_id)
 	{
 		$app->halt(400, 'Invalid year or series id');
 	}
-	
-	$response = array();
-	
-	foreach($GLOBALS['geotypes'] as $key => $id)
-		$response[] = ['zone' => $key]; 
 
-	echo json_encode($response);
+    echo Query::getInstance()->getGeoTypeAsArray($datasource_id);
 
 })->conditions(array('datasource' => 'census|forecast|estimate', 'year' => '(\d){2,4}'));
 
 //Get Information - Zone Names for Geotype
-$app->get('/:datasource/:year/:geotype', function ($datasource, $series, $geotype)
+$app->get('/:datasource/:year/:geotype', function ($datasource, $series, $geotype) use ($app)
 {
-	$columnName = $GLOBALS['geotypes'][$geotype];
 	$series_id = 13;
 	
 	if ($datasource == 'forecast') 
@@ -119,12 +113,13 @@ $app->get('/:datasource/:year/:geotype', function ($datasource, $series, $geotyp
 			$series_id = 10;
 		}
 	}
-	
-	$params = [$series_id];
-
-	$sql = "select lower(geozone) as {$geotype} from dim.mgra where series = $1 and geotype = $2 group by geozone order by geozone;";
-	
-	echo Query::getInstance()->getZonesAsJson($sql, $series_id, $geotype);
+    
+    $response = Query::getInstance()->getZonesAsJson($series_id, $geotype);
+    
+    if ($response == 'false') $app->halt(400, 'Invalid request parameters');
+       
+    
+    echo $response;
 	
 })->conditions(array('datasource' => 'census|forecast|estimate', 'year' => '(\d){2,4}'));
 
@@ -137,7 +132,8 @@ $app->get('/:datasource/:year/:geotype/:zone/housing', function ($datasource, $y
         $app->halt(400, 'Invalid year or series id');
     
     $sql = "SELECT geozone as {$geotype}, yr as year, unit_type, cast(units as int), occupied, unoccupied, round(cast(vacancy_rate as numeric),5) as vacancy_rate FROM fact.summary_housing 
-            WHERE datasource_id = $1 AND geotype = $2 AND lower(geozone) = lower($3);";	
+            WHERE datasource_id = $1 AND geotype = $2 AND lower(geozone) = lower($3)"
+            .($datasource == 'estimate' ? " AND yr = {$year}" : "");	
 
     $json = Query::getInstance()->getResultAsJson($sql, $datasource_id, $geotype, $zone); 
 
@@ -154,7 +150,8 @@ $app->get('/:datasource/:year/:geotype/:zone/population', function ($datasource,
         $app->halt(400, 'Invalid year or series id');
 
     $sql = "SELECT geozone as {$geotype}, yr as year, housing_type, population FROM fact.summary_population 
-            WHERE datasource_id = $1 AND geotype = $2 AND lower(geozone) = lower($3);";	
+            WHERE datasource_id = $1 AND geotype = $2 AND lower(geozone) = lower($3)"
+            .($datasource == 'estimate' ? " AND yr = {$year}" : "");	
 
     $json = Query::getInstance()->getResultAsJson($sql, $datasource_id, $geotype, $zone); 
 
@@ -171,7 +168,8 @@ $app->get('/:datasource/:year/:geotype/:zone/ethnicity', function ($datasource, 
         $app->halt(400, 'Invalid year or series id');
 
     $sql = "SELECT geozone as {$geotype}, yr as year, ethnic as ethnicity, population FROM fact.summary_ethnicity
-            WHERE datasource_id = $1 AND geotype = $2 AND lower(geozone) = lower($3);";	
+            WHERE datasource_id = $1 AND geotype = $2 AND lower(geozone) = lower($3)"
+            .($datasource == 'estimate' ? " AND yr = {$year}" : "");	
 
     $json = Query::getInstance()->getResultAsJson($sql, $datasource_id, $geotype, $zone); 
 
@@ -187,7 +185,8 @@ $app->get('/:datasource/:year/:geotype/:zone/age', function ($datasource, $year,
         $app->halt(400, 'Invalid year or series id');
 
     $sql = "SELECT geozone as {$geotype}, yr as year, sex, age_group as group_10yr, population FROM fact.summary_age
-            WHERE datasource_id = $1 AND geotype = $2 AND lower(geozone) = lower($3);";	
+            WHERE datasource_id = $1 AND geotype = $2 AND lower(geozone) = lower($3)"
+            .($datasource == 'estimate' ? " AND yr = {$year}" : "");	
 
     $json = Query::getInstance()->getResultAsJson($sql, $datasource_id, $geotype, $zone); 
 
@@ -203,7 +202,8 @@ $app->get('/:datasource/:year/:geotype/:zone/income', function ($datasource, $ye
         $app->halt(400, 'Invalid year or series id');
 
     $sql = "SELECT geozone as {$geotype}, yr as year, ordinal, income_group, households FROM fact.summary_income 
-            WHERE datasource_id = $1 AND geotype = $2 AND lower(geozone) = lower($3);";	
+            WHERE datasource_id = $1 AND geotype = $2 AND lower(geozone) = lower($3)"
+            .($datasource == 'estimate' ? " AND yr = {$year}" : "");	
 
     $json = Query::getInstance()->getResultAsJson($sql, $datasource_id, $geotype, $zone); 
 
@@ -218,7 +218,8 @@ $app->get('/:datasource/:year/:geotype/:zone/income/median', function ($datasour
         $app->halt(400, 'Invalid year or series id');
 
     $sql = "SELECT geozone as {$geotype}, yr as year, median_inc FROM fact.summary_income_median 
-            WHERE datasource_id = $1 AND geotype = $2 AND lower(geozone) = lower($3);";	
+            WHERE datasource_id = $1 AND geotype = $2 AND lower(geozone) = lower($3)"
+            .($datasource == 'estimate' ? " AND yr = {$year}" : "");	
 
     $json = Query::getInstance()->getResultAsJson($sql, $datasource_id, $geotype, $zone); 
 
@@ -345,7 +346,8 @@ $app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, 
 
     //*******AGE*************
     $ageSql = "SELECT geozone as {$geotype}, yr as year, sex, age_group as group_10yr, population FROM fact.summary_age
-                WHERE datasource_id = :datasource_id AND geotype = :geotype AND age_group <> 'Total Population'";
+                WHERE datasource_id = :datasource_id AND geotype = :geotype AND age_group <> 'Total Population'
+                ORDER BY yr, sex, age_group";
     $writer->writeSheet(
                 Query::getInstance()->getResultAsArray($ageSql, $datasource_id, $geotype, null),
                 'Age'
@@ -360,7 +362,7 @@ $app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, 
 
     //*******ETHNICITY*************
     $ethnicitySql = "SELECT geozone as {$geotype}, yr as year, ethnic as ethnicity, population FROM fact.summary_ethnicity 
-                        WHERE datasource_id = :datasource_id AND geotype = :geotype AND ethnic <> 'Total Population' order by geozone, yr;";
+                        WHERE datasource_id = :datasource_id AND geotype = :geotype AND ethnic <> 'Total Population' order by geozone, yr, ethnic;";
     
     $writer->writeSheet(
                 Query::getInstance()->getResultAsArray($ethnicitySql, $datasource_id, $geotype, null),
@@ -375,7 +377,7 @@ $app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, 
     
     //*******HOUSING*************
     $housingSql = "SELECT geozone as {$geotype}, yr, unit_type, units, occupied, unoccupied, vacancy_rate FROM fact.summary_housing 
-        WHERE datasource_id = :datasource_id AND geotype = :geotype and unit_type <> 'Total Units' order by geozone, yr;";
+        WHERE datasource_id = :datasource_id AND geotype = :geotype and unit_type <> 'Total Units' order by geozone, yr, unit_type;";
 
     $writer->writeSheet(
                 Query::getInstance()->getResultAsArray($housingSql, $datasource_id, $geotype, null),
@@ -393,7 +395,7 @@ $app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, 
 
     //*******POPULATION*************
     $populationSql = "SELECT geozone as {$geotype}, yr, housing_type, population FROM fact.summary_population 
-    		WHERE datasource_id = :datasource_id AND geotype = :geotype order by geozone, yr;";
+    		WHERE datasource_id = :datasource_id AND geotype = :geotype order by geozone, yr, housing_type;";
     
     $writer->writeSheet(
                 Query::getInstance()->getResultAsArray($populationSql, $datasource_id, $geotype, null),
@@ -425,7 +427,7 @@ $app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, 
     if("forecast"==$datasource)
     {
         $jobsSql = "SELECT geozone as {$geotype}, yr, employment_type, jobs FROM fact.summary_jobs 
-                        WHERE datasource_id = :datasource_id AND geotype = :geotype and employment_type <> 'Total Jobs' order by geozone, yr;";
+                        WHERE datasource_id = :datasource_id AND geotype = :geotype and employment_type <> 'Total Jobs' order by geozone, yr, employment_type;";
         $writer->writeSheet(
                 Query::getInstance()->getResultAsArray($jobsSql, $datasource_id, $geotype, null),
                 'Civilian Jobs',
@@ -480,7 +482,8 @@ $app->get('/:datasource/:year/:geotype/:zones+/export/xlsx', function ($datasour
     		'POPULATION' => 'integer'
     );
     $ageSql = "SELECT geozone as {$geotype}, yr as year, sex, age_group as group_10yr, population FROM fact.summary_age
-    WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) AND age_group <> 'Total Population'";
+    WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) AND age_group <> 'Total Population'
+    ORDER BY yr, sex, age_group";
     $ageArray = Query::getInstance()->getResultAsArray($ageSql, $datasource_id, $geotype, $zonelist);
     
     //*******ETHNICITY*************
@@ -491,7 +494,7 @@ $app->get('/:datasource/:year/:geotype/:zones+/export/xlsx', function ($datasour
     	'POPULATION' => 'integer'
     );
     $ethnicitySql = "SELECT geozone as {$geotype}, yr as year, ethnic as ethnicity, population FROM fact.summary_ethnicity 
-    		WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) AND ethnic <> 'Total Population' order by geozone, yr;";
+    		WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) AND ethnic <> 'Total Population' order by geozone, yr, ethnic;";
     $ethnicityArray = Query::getInstance()->getResultAsArray($ethnicitySql, $datasource_id, $geotype, $zonelist);
     
     //*******HOUSING*************
@@ -505,7 +508,7 @@ $app->get('/:datasource/:year/:geotype/:zones+/export/xlsx', function ($datasour
     	'VACANCY RATE' => 'double'
     );
     $housingSql = "SELECT geozone, yr, unit_type, units, occupied, unoccupied, vacancy_rate FROM fact.summary_housing 
-        WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) and unit_type <> 'Total Units' order by geozone, yr;";
+        WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) and unit_type <> 'Total Units' order by geozone, yr, unit_type;";
     $housingArray = Query::getInstance()->getResultAsArray($housingSql, $datasource_id, $geotype, $zonelist);
     
     //*******POPULATION*************
@@ -516,7 +519,7 @@ $app->get('/:datasource/:year/:geotype/:zones+/export/xlsx', function ($datasour
     	'POPULATION' => 'integer',
     );
     $populationSql = "SELECT geozone, yr, housing_type, population FROM fact.summary_population 
-    		WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) order by geozone, yr;";
+    		WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) order by geozone, yr, housing_type;";
     $populationArray = Query::getInstance()->getResultAsArray($populationSql, $datasource_id, $geotype, $zonelist);
     
     //*******INCOME*************
@@ -546,7 +549,7 @@ $app->get('/:datasource/:year/:geotype/:zones+/export/xlsx', function ($datasour
       		'JOBS' => 'integer'
       );
       $jobsSql = "SELECT geozone, yr, employment_type, jobs FROM fact.summary_jobs 
-      		WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) and employment_type <> 'Total Jobs' order by geozone, yr;";
+      		WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) and employment_type <> 'Total Jobs' order by geozone, yr, employment_type;";
       $jobsArray = Query::getInstance()->getResultAsArray($jobsSql, $datasource_id, $geotype, $zonelist);
       $writer->writeSheet($jobsArray, 'Civilian Jobs', $jobsHeader);
     }
