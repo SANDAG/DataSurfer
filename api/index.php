@@ -472,15 +472,15 @@ $app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, 
 
         })->conditions(array('datasource' => 'forecast|estimate', 'year' => '(\d){2,4}'));
 
-$app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, $year, $geotype) use ($app)
+$app->get('/census/2000/:geotype/all/export/xlsx', function ($geotype) use ($app)
 {
-    $datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
+    $datasource_id = Query::getInstance()->getDatasourceId('census', 2000);
         
     if (!$datasource_id)
         $app->halt(400, 'Invalid year or series id');
         
     $ts = round(microtime(true) * 1000);
-    $file_name = strtolower(join("_", array($datasource, $year, $geotype))."_{$ts}.xlsx");
+    $file_name = strtolower(join("_", array('census', 2000, $geotype))."_{$ts}.xlsx");
         
     $res = $app->response();
     $res['Content-Description'] = 'File Transfer';
@@ -591,7 +591,7 @@ $app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, 
             
             $writer->writeToStdOut();
 
-        })->conditions(array('datasource'=>'census' , 'year' => '2000'));
+        });
             
 
 $app->get('/:datasource/:year/:geotype/:zones+/export/xlsx', function ($datasource, $year, $geotype, $zones) use ($app)
@@ -706,11 +706,10 @@ $app->get('/:datasource/:year/:geotype/:zones+/export/xlsx', function ($datasour
             
             $writer->writeToStdOut();
         //})->conditions(array('datasource' => 'forecast|census|estimate'));
-        })->conditions(array('datasource' => 'forecast|estimate'));
+})->conditions(array('datasource' => 'forecast|estimate'));
 
 
-//$app->get('/census/:year/:geotype/:zones+/export/xlsx', function ($datasource, $year, $geotype, $zones) use ($app)
-$app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geotype, $zones) use ($app)
+$app->get('/census/2000/:geotype/:zones+/export/xlsx', function ( $geotype, $zones) use ($app)
     {
         if (count($zones) > 20)
         {
@@ -720,13 +719,13 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoty
         
         $zonelist = '{'.strtolower(implode(',', $zones)).'}';
         $datasource = "census";
-        $datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
+        $datasource_id = Query::getInstance()->getDatasourceId('census', 2000);
         
         if (!$datasource_id)
         $app->halt(400, 'Invalid year or series id');
         
         $ts = round(microtime(true) * 1000);
-        $file_name = strtolower(join("_", array($datasource, $year, $geotype))."_{$ts}.xlsx");
+        $file_name = strtolower(join("_", array('census', 2000, $geotype))."_{$ts}.xlsx");
         
         $res = $app->response();
         $res['Content-Description'] = 'File Transfer';
@@ -820,7 +819,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoty
             }
             
             $writer->writeToStdOut();
-        })->conditions(array( 'year' => '2000' ));
+        });
 
 //Forecast - Ethnicity Change
 $app->get('/forecast/:series/:geotype/:zone/ethnicity/change', function ($series, $geotype, $zone) use ($app)
