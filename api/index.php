@@ -1068,9 +1068,11 @@ $app->get('/census/:year/:geotype/:zone/language', function ($year, $geotype, $z
         echo $json;
 })->conditions(array('year' => '2000|2010'));
 
-$app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoType, $zones) use ($app)
+$app->get('/census/2010/:geotype/:zones+/export/xlsx', function ( $geoType, $zones) use ($app)
 {
-    echo Query::getInstance()->getZoneAsGeoJson($datasource, $series, $geotype, $zone);
+    $datasource = 'census';
+    $year = 2010;
+    echo Query::getInstance()->getZoneAsGeoJson($datasource, $year, $geotype, $zone);
         if (count($zones) > 20)
         {
             $app->halt(400, 'Max Zone Request Exceeded (Limit: 20)');
