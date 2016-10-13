@@ -36,6 +36,7 @@ class Query {
         $columns = ["forecast" => "ds.series", "census"=>"yr.yr", "estimate"=>"yr.yr"];
 		
 		
+		
         $sql = "SELECT ds.datasource_id FROM dim.datasource ds INNER JOIN dim.datasource_type ds_type ON ds.datasource_type_id = ds_type.datasource_type_id"
                 .($datasource !== "forecast" ? " INNER JOIN dim.forecast_year yr ON ds.datasource_id = yr.datasource_id" : "")
                 ." WHERE lower(ds_type.datasource_type) = lower($1) and {$columns[$datasource]} = $2 AND ds.is_active ORDER BY 1";
