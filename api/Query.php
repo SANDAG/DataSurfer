@@ -33,14 +33,13 @@ class Query {
     
     public function getDatasourceId($datasource, $year)
     {
-        $columns = ["forecast" => "series", "census"=>"yr", "estimate"=>"yr"];
+        $columns = ["forecast" => "ds.series", "census"=>"yr.yr", "estimate"=>"yr.yr"];
         
         $sql = "SELECT ds.datasource_id FROM dim.datasource ds INNER JOIN dim.datasource_type ds_type ON ds.datasource_type_id = ds_type.datasource_type_id"
                 .($datasource !== "forecast" ? " INNER JOIN dim.forecast_year yr ON ds.datasource_id = yr.datasource_id" : "")
                 ." WHERE lower(ds_type.datasource_type) = lower($1) and {$columns[$datasource]} = $2 AND ds.is_active ORDER BY 1";
         
         $db = pg_connect("dbname={$this->database} host={$this->db_server} user={$this->uid} password={$this->pwd}");
-        
         $result = pg_query_params($db, $sql, array($datasource, $year));
         
         if($datasource_id = pg_fetch_result($result, 'datasource_id'))
@@ -68,6 +67,186 @@ class Query {
 	 
         return $json;
 	}
+    
+    public function getZoneAsGeoJson($datasource, $year, $geotype, $geozone)
+    {
+        
+        $datasource_id = [
+          "census" => [
+            2000 => [
+                "college"=>[22],
+                "cpa"=>[12,17],
+                "elementary"=>[44],
+                "jurisdiction"=>[38],
+                "msa"=>[30],
+                "region"=>[4],
+                "sdcouncil"=>[145],
+                "secondary"=>[47],
+                "sra"=>[53],
+                "supervisorial"=>[55],
+                "tract"=>[58],
+                "unified"=>[61],
+                "zip"=>[72]
+            ],
+            2010 => [
+                "college"=>[23],
+                "cpa"=>[14,19],
+                "elementary"=>[45],
+                "jurisdiction"=>[39],
+                "msa"=>[30],
+                "region"=>[4],
+                "sdcouncil"=>[42],
+                "secondary"=>[48],
+                "sra"=>[53],
+                "supervisorial"=>[56],
+                "tract"=>[59],
+                "unified"=>[62],
+                "zip"=>[73]
+            ]
+        ],
+        "estimate" => [
+            2010 => [
+                "college"=>[23],
+                "cpa"=>[14,19],
+                "elementary"=>[45],
+                "jurisdiction"=>[39],
+                "msa"=>[30],
+                "region"=>[4],
+                "sdcouncil"=>[42],
+                "secondary"=>[48],
+                "sra"=>[53],
+                "supervisorial"=>[56],
+                "tract"=>[59],
+                "unified"=>[62],
+                "zip"=>[73]
+            ],
+            2011 => [
+                "college"=>[132],
+                "cpa"=>[133,134],
+                "elementary"=>[135],
+                "jurisdiction"=>[136],
+                "msa"=>[30],
+                "region"=>[4],
+                "sdcouncil"=>[42],
+                "secondary"=>[137],
+                "sra"=>[53],
+                "supervisorial"=>[56],
+                "tract"=>[59],
+                "unified"=>[138],
+                "zip"=>[139]
+            ],
+            2012 => [
+                "college"=>[132],
+                "cpa"=>[133,134],
+                "elementary"=>[135],
+                "jurisdiction"=>[136],
+                "msa"=>[30],
+                "region"=>[4],
+                "sdcouncil"=>[42],
+                "secondary"=>[137],
+                "sra"=>[53],
+                "supervisorial"=>[56],
+                "tract"=>[59],
+                "unified"=>[138],
+                "zip"=>[139]
+            ],
+            2013 => [
+                "college"=>[132],
+                "cpa"=>[133,134],
+                "elementary"=>[135],
+                "jurisdiction"=>[136],
+                "msa"=>[30],
+                "region"=>[4],
+                "sdcouncil"=>[42],
+                "secondary"=>[137],
+                "sra"=>[53],
+                "supervisorial"=>[56],
+                "tract"=>[59],
+                "unified"=>[138],
+                "zip"=>[139]
+            ],
+            2014 => [
+                "college"=>[132],
+                "cpa"=>[133,134],
+                "elementary"=>[135],
+                "jurisdiction"=>[136],
+                "msa"=>[30],
+                "region"=>[4],
+                "sdcouncil"=>[42],
+                "secondary"=>[137],
+                "sra"=>[53],
+                "supervisorial"=>[56],
+                "tract"=>[59],
+                "unified"=>[138],
+                "zip"=>[139]
+            ],
+            2015 => [
+                "college"=>[132],
+                "cpa"=>[133,134],
+                "elementary"=>[135],
+                "jurisdiction"=>[136],
+                "msa"=>[30],
+                "region"=>[4],
+                "sdcouncil"=>[42],
+                "secondary"=>[137],
+                "sra"=>[53],
+                "supervisorial"=>[56],
+                "tract"=>[59],
+                "unified"=>[138],
+                "zip"=>[139]
+            ]
+        ],
+        "forecast" => [
+            12=> [
+                "college"=>[22],
+                "cpa"=>[14,19],
+                "elementary"=>[44],
+                "jurisdiction"=>[38],
+                "msa"=>[30],
+                "region"=>[4],
+                "sdcouncil"=>[145],
+                "secondary"=>[47],
+                "sra"=>[53],
+                "supervisorial"=>[55],
+                "tract"=>[59],
+                "unified"=>[61],
+                "zip"=>[73]
+            ],
+            13 => [
+                "college"=>[23],
+                "cpa"=>[15,20],
+                "elementary"=>[45],
+                "jurisdiction"=>[39],
+                "msa"=>[30],
+                "region"=>[4],
+                "sdcouncil"=>[42],
+                "secondary"=>[48],
+                "sra"=>[53],
+                "supervisorial"=>[56],
+                "tract"=>[59],
+                "unified"=>[62],
+                "zip"=>[73]
+            ]
+          ]
+        ];
+        
+        $ds_id = $datasource_id[$datasource][$year][$geotype];
+        
+        $db = pg_connect("dbname={$this->database} host={$this->db_server} user={$this->uid} password={$this->pwd}");
+        $sql = "SELECT z.geojson FROM dim.geography_zone z ".
+               "WHERE geography_type_id = ANY($1) AND ".
+                ((is_numeric($geozone) and $geotype != 'tract') ? "z.zone = $2 " : "lower(z.name) = $2 ");
+        
+        $result = pg_query_params($db, $sql, array('{' . implode(', ', $ds_id) . '}', $geozone));
+		$result_array = pg_fetch_all($result);
+        
+        $json = $result_array[0]["geojson"];
+
+        pg_free_result($result);
+	    pg_close($db);
+	 
+        return $json;
+    }
 	
     public function getYearsAsJson($sql, $datasource)
     {
@@ -125,7 +304,7 @@ class Query {
         );
 		
 		$db = pg_connect("dbname={$this->database} host={$this->db_server} user={$this->uid} password={$this->pwd}");
-	    
+
 	    $result = pg_query_params($db, $sql, array($datasource_id, $geotype, $geozone));
 	    $result_array = pg_fetch_all($result);
 	    $mod_array = array();

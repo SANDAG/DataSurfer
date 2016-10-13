@@ -54,7 +54,7 @@ $url_age = $url . "/age";
 $url_housing = $url . "/housing";
 $url_income = $url . "/income";
 $url_jobs = $url . "/jobs";
-$url_map = $url . "/map";
+$url_map = $url . "/map/geojson";
 $urlFolder = DIR_DOWNLOAD.'sandag_'.$source_type.'_'.$year.'_'.str_replace(' ', '-', $geography_type).'_'.str_replace(' ', '-', $location).'.pdf';
 downloadFileFromApi($urlFolder, $url.'/export/pdf');
 
@@ -173,7 +173,7 @@ $page_title="SANDAG Data Surfer | Data Overview";
 											<div class="chart-item">
 												<h4>area map</h4>
 												<div class="chart-map">
-													<div id="chart-3" class="chart-frame chart-img" style="background-image:url(content/images/map.png);"></div>
+													<div id="chart-3" class="chart-frame"></div>
 												</div>
 											</div>
 										</div>
@@ -444,12 +444,40 @@ $page_title="SANDAG Data Surfer | Data Overview";
         <p class="noJS">YOU NEED JAVASCRIPT TO RUN THIS SITE. PLEASE ENABLE JAVASCRIPT IN YOUR INTERNET OPTIONS.</p>
     </noscript>
     <!-- END HTML -->   
-    <script>		
+    <script>
+        var Esri_WorldGrayCanvas = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+            maxZoom: 16
+        });
+        
+        var Stamen_Terrain = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+	subdomains: 'abcd',
+	maxZoom: 19
+});
+        
+        var overlay = L.geoJson();
+        
 		$(document).ready(function() {
-            $('#chart-3').css("background-image", "url("+$('#url_map').val()+")");
-            var flag_show_chart = 0;
-            var window_width = $(window).width();
-            if(window_width > 0 && window_width <768){
+            //$('#chart-3').css("background-image", "url("+$('#url_map').val()+")");
+            map = L.map('chart-3', {
+                zoom: 10,
+                center: [32.5, -117.3],
+                layers: [Stamen_Terrain, overlay]
+            });
+            
+        $.ajax({
+            dataType: "json",
+            url: $('#url_map').val(),
+            success: function(data) {
+                overlay.addData(data);
+                map.fitBounds(overlay.getBounds());
+            }
+        });
+        
+        var flag_show_chart = 0;
+        var window_width = $(window).width();
+        if(window_width > 0 && window_width <768){
                 loadMiniSize();
             }else if(window_width >= 768 && window_width < 1024){
                 loadAvgSize();

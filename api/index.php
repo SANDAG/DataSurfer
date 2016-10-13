@@ -70,12 +70,18 @@ $app->get('/', function () use ($app)
     $app->render('home.php');
 });
 
+$app->get('/map', function () use ($app)
+{
+    $app->response->headers->set('Content-Type', 'text/html');
+    $app->render('map.htm');
+});
+
 $app->get('/:datasource', function ($datasource) use ($app)
 {
     $datasource_type_id = ["census"=>"1","estimate"=>"2","forecast"=>"3"];
     
     $labels = ["forecast" => "series", "census"=>"year", "estimate"=>"year"];
-    $columns = ["forecast" => "series", "census"=>"yr", "estimate"=>"yr"];
+    $columns = ["forecast" => "ds.series", "census"=>"yr.yr", "estimate"=>"yr.yr"];
 
     $sql = "SELECT {$columns[$datasource]} as {$labels[$datasource]} FROM dim.datasource ds" 
         .($datasource !== 'forecast' ? " INNER JOIN dim.forecast_year yr ON ds.datasource_id = yr.datasource_id" : "")
@@ -115,11 +121,31 @@ $app->get('/:datasource/:year/:geotype', function ($datasource, $series, $geotyp
 	}
     
     $response = Query::getInstance()->getZonesAsJson($series_id, $geotype);
-    
+    $json = json_decode($response, true);
     if ($response == 'false') $app->halt(400, 'Invalid request parameters');
-       
     
-    echo $response;
+    if ($geotype == 'unified' and ($series == 13 or $series == 2010))
+    {
+        $unset_queue = array();
+
+        foreach ( $json as $i=>$item )
+        {
+
+            if ($item == "bonsall")
+            {
+
+                $unset_queue[] = $i;
+            }
+        }
+
+        foreach ( $unset_queue as $index )
+        {
+            echo $index;
+            unset($json[$index]);
+        }
+    }
+    
+    echo json_encode($json);
 	
 })->conditions(array('datasource' => 'census|forecast|estimate', 'year' => '(\d){2,4}'));
 
@@ -625,6 +651,11 @@ $app->get('/:program/:series/:geotype/:zone/map', function ($datasource, $series
 		$app->halt(400, 'Invalid PDF Export Request');
 	}
 	
+})->conditions(array('datasource' => 'census|forecast|estimate', 'series' => '(\d){2,4}'));
+
+$app->get('/:datasource/:series/:geotype/:zone/map/geojson', function ($datasource, $series, $geotype, $zone) use ($app)
+{
+    echo Query::getInstance()->getZoneAsGeoJson($datasource, $series, $geotype, $zone);
 })->conditions(array('datasource' => 'census|forecast|estimate', 'series' => '(\d){2,4}'));
 
 /**

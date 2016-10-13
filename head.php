@@ -33,9 +33,12 @@
 <link type="text/css" rel="stylesheet" href="/content/css/ipad.css" /> 
 <link type="text/css" rel="stylesheet" href="/content/css/mobile.css" /> 
 <link type="text/css" rel="stylesheet" href="/content/css/retina.css" /> 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+
 <!-- === SCRIPTS === -->  
 <script type="text/javascript" src="/scripts/libs/modernizr.custom.js"></script>
-<script type="text/javascript" src="/scripts/libs/jquery-1.9.1.js"></script>    	
+<script type="text/javascript" src="/scripts/libs/jquery-1.9.1.js"></script>  
+<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>  	
 
 <script type="text/javascript">
 var isMobile = {
