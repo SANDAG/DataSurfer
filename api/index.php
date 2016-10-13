@@ -892,107 +892,111 @@ $app->get('/:program/:series/:geotype/:zone/map', function ($datasource, $series
 		
 })->conditions(array('datasource' => 'census|forecast|estimate', 'series' => '(\d){2,4}'));
 
+$app->get('/:datasource/:series/:geotype/:zone/map/geojson', function ($datasource, $series, $geotype, $zone) use ($app)
+{
+    echo Query::getInstance()->getZoneAsGeoJson($datasource, $series, $geotype, $zone);
+})->conditions(array('datasource' => 'census|forecast|estimate', 'series' => '(\d){2,4}'));
+
 //Census - Means of Transportation to Work
 $app->get('/:datasource/:year/:geotype/:zone/transportation', function ($datasource, $year, $geotype, $zone) use ($app)
-	{
-		$datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
+{
+	$datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
+	
+	if (!$datasource_id)
+        $app->halt(400, 'Invalid year or series id');
 		
-		if (!$datasource_id)
-		$app->halt(400, 'Invalid year or series id');
+	$transportationtoWorkSql = " select  geography_zone {$geotype} ,{$year} Yearnumber,
+				unnest(array[
+					'Drive Alone',
+					'Carpool',
+					'Public Transportation' ,
+					'Bicycle',
+					'Walk',
+					'Other means',
+					'Work at home' ]) AS means_of_trans,	
+				unnest(array[
+				emp_mode_auto_drive_alone,
+				emp_mode_auto_carpool,
+				emp_mode_transit,
+				emp_mode_bike,
+				emp_mode_walk,
+				emp_mode_others + emp_mode_motor,
+				emp_mode_home
+				]) as Number
+				from app.acs_means_of_trans($1, $2, $3 );";
+                    
+	if( $year == "2010"){
+		$json = Query::getInstance()->getResultAsJson( $transportationtoWorkSql, 9, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
+	}elseif( $year == "2000" ){
+		$json = Query::getInstance()->getResultAsJson( $transportationtoWorkSql, 12, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
+	}
+	echo $json;		
 		
-		$transportationtoWorkSql = " select  geography_zone {$geotype} ,{$year} Yearnumber,
-					unnest(array[
-						'Drive Alone',
-						'Carpool',
-						'Public Transportation' ,
-						'Bicycle',
-						'Walk',
-						'Other means',
-						'Work at home' ]) AS means_of_trans,	
-					unnest(array[
-					emp_mode_auto_drive_alone,
-					emp_mode_auto_carpool,
-					emp_mode_transit,
-					emp_mode_bike,
-					emp_mode_walk,
-					emp_mode_others + emp_mode_motor,
-					emp_mode_home
-					]) as Number
-					from app.acs_means_of_trans($1, $2, $3 );";
-		if( $year == "2010"){
-			$json = Query::getInstance()->getResultAsJson( $transportationtoWorkSql, 9, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
-		}elseif( $year == "2000" ){
-			$json = Query::getInstance()->getResultAsJson( $transportationtoWorkSql, 12, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
-		}
-		echo $json;		
-		
-	})->conditions(array('datasource' => 'census', 'year' => '(\d){2,4}'));
+})->conditions(array('datasource' => 'census', 'year' => '(\d){2,4}'));
+    
 //Census - Employment Status
 $app->get('/:datasource/:year/:geotype/:zone/employmentstatus', function ($datasource, $year, $geotype, $zone) use ($app)
-	{
-		$datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
-		
-		if (!$datasource_id)
-		$app->halt(400, 'Invalid year or series id');
+{
+	$datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
 	
-		$employmentStatusSql = "select '$zone' as {$geotype} ,{$year}  Yearnumber,
-			unnest( array[ 'Population age 16 and older',
-				
-				'Armed forces',
-				'Civilian employed',
-				'Civilian unemployed',
-				'Not in labor force'])
-				as Status,			
-			unnest(	array[ pop_16plus_male,
-				
-				in_armed_forces_male,
-				emp_civ_male,
-				unemployed_male,
-				not_in_labor_force_male])	
-				as male,
-			unnest(	array[ pop_16plus_female,
-			
-				in_armed_forces_female,
-				emp_civ_female,
-				unemployed_female,
-				not_in_labor_force_female])	
-				as female
-			from app.acs_employment_status_acs( $1, $2, $3);";
+	if (!$datasource_id)
+	$app->halt(400, 'Invalid year or series id');
+
+	$employmentStatusSql = "select '$zone' as {$geotype} ,{$year}  Yearnumber,
+		unnest( array[ 'Population age 16 and older',
+			'Armed forces',
+			'Civilian employed',
+			'Civilian unemployed',
+			'Not in labor force'])
+			as Status,			
+		unnest(	array[ pop_16plus_male,
+			in_armed_forces_male,
+			emp_civ_male,
+			unemployed_male,
+			not_in_labor_force_male])	
+			as male,
+		unnest(	array[ pop_16plus_female,
+			in_armed_forces_female,
+			emp_civ_female,
+			unemployed_female,
+			not_in_labor_force_female])	
+			as female
+		from app.acs_employment_status_acs( $1, $2, $3);";
 		
-		if( $year == "2010"){
-			$json = Query::getInstance()->getResultAsJson( $employmentStatusSql, 9, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
-		}elseif( $year == "2000" ){
-			$json = Query::getInstance()->getResultAsJson( $employmentStatusSql, 12, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
-		}
-		echo $json;
-	})->conditions(array('datasource' => 'census', 'year' => '(\d){2,4}'));
+	if( $year == "2010"){
+		$json = Query::getInstance()->getResultAsJson( $employmentStatusSql, 9, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
+	}elseif( $year == "2000" ){
+		$json = Query::getInstance()->getResultAsJson( $employmentStatusSql, 12, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
+	}
+	echo $json;
+})->conditions(array('datasource' => 'census', 'year' => '(\d){2,4}'));
 	
 //Census / Estimate - Poverty Status
 $app->get('/:datasource/:year/:geotype/:zone/povertystatus', function ($datasource, $year, $geotype, $zone) use ($app)
-	{
-		$datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
+{
+	$datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
 		
-		if (!$datasource_id)
-		$app->halt(400, 'Invalid year or series id');
-		$povertyStatusSql = "select geography_zone  {$geotype}, {$year} Yearnumber,
-				unnest(array[   'Total',
-						'Above Poverty',
-						'Below Poverty'
-					 ]) AS Status,
-				unnest(array[pop_poverty,
-					pop_poverty_above,
-					pop_poverty_below
-					]) as Number			
-				from app.acs_poverty_status($1, $2, $3 );";
+	if (!$datasource_id)
+	$app->halt(400, 'Invalid year or series id');
+	$povertyStatusSql = "select geography_zone  {$geotype}, {$year} Yearnumber,
+			unnest(array[   'Total',
+					'Above Poverty',
+					'Below Poverty'
+				 ]) AS Status,
+			unnest(array[pop_poverty,
+				pop_poverty_above,
+				pop_poverty_below
+				]) as Number			
+			from app.acs_poverty_status($1, $2, $3 );";
 	
-		
-		if( $year == "2010" ){
-			$json = Query::getInstance()->getResultAsJson( $povertyStatusSql, 9, $geotype, mb_convert_case($zone, MB_CASE_TITLE, 'utf-8'));
-		}elseif( $year == "2000" ){
-			$json = Query::getInstance()->getResultAsJson( $povertyStatusSql, 12, $geotype, mb_convert_case($zone, MB_CASE_TITLE, 'utf-8'));
-		}
-		echo $json;		
-	})->conditions(array('datasource' => 'census', 'year' => '(\d){2,4}'));
+	if( $year == "2010" ){
+		$json = Query::getInstance()->getResultAsJson( $povertyStatusSql, 9, $geotype, mb_convert_case($zone, MB_CASE_TITLE, 'utf-8'));
+	}elseif( $year == "2000" ){
+		$json = Query::getInstance()->getResultAsJson( $povertyStatusSql, 12, $geotype, mb_convert_case($zone, MB_CASE_TITLE, 'utf-8'));
+	}
+	echo $json;		
+})->conditions(array('datasource' => 'census', 'year' => '(\d){2,4}'));
+
 //Census / Estimate -Educational Attainment
 $app->get('/:datasource/:year/:geotype/:zone/education', function ($datasource, $year, $geotype, $zone) use ($app)
 	{
@@ -1025,7 +1029,7 @@ $app->get('/:datasource/:year/:geotype/:zone/education', function ($datasource, 
 		}
 		
 		echo $json;		
-	})->conditions(array('datasource' => 'census', 'year' => '(\d){2,4}'));
+})->conditions(array('datasource' => 'census', 'year' => '(\d){2,4}'));
 
 //Census / Estimate -Language Spoken
 $app->get('/:datasource/:year/:geotype/:zone/language', function ($datasource, $year, $geotype, $zone) use ($app)
@@ -1063,7 +1067,8 @@ $app->get('/:datasource/:year/:geotype/:zone/language', function ($datasource, $
 			$json = Query::getInstance()->getResultAsJson( $languageSpokenSql, 12, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
 		}
 		echo $json;
-	})->conditions(array('datasource' => 'census', 'year' => '(\d){2,4}'));
+})->conditions(array('datasource' => 'census', 'year' => '(\d){2,4}'));
+
 $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoType, $zones) use ($app)
 {
     echo Query::getInstance()->getZoneAsGeoJson($datasource, $series, $geotype, $zone);
