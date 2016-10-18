@@ -763,6 +763,7 @@ function loadCurrentData(){
                             arrTemp.push(obj[key]);
                         }
                     }
+
                     arrTemp.sort();
                     for(var i=0;i<arrTemp.length;i++){
                         if(!isMobile.any()){
@@ -808,7 +809,14 @@ function loadCurrentData(){
                             arrTemp.push(obj[key]);
                         }
                     }
-                    arrTemp.sort();
+                    
+                    if (arrTemp.every(function checkNumbers(element, index, array) {return $.isNumeric(element);}))
+					{
+					    arrTemp.sort(function (a,b){return a-b;});
+					} else {
+					    arrTemp.sort();
+					}
+                    
                     for(var i=0;i<arrTemp.length;i++){
                         if(!isMobile.any()){
                             $('#slt_location').append($('<option>', {value: arrTemp[i], text: arrTemp[i]}));
