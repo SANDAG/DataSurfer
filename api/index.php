@@ -1072,7 +1072,7 @@ $app->get('/census/2010/:geotype/:zones+/export/xlsx', function ( $geoType, $zon
 {
     $datasource = 'census';
     $year = 2010;
-    echo Query::getInstance()->getZoneAsGeoJson($datasource, $year, $geotype, $zone);
+    //echo Query::getInstance()->getZoneAsGeoJson($datasource, $year, $geotype, $zone);
         if (count($zones) > 20)
         {
             $app->halt(400, 'Max Zone Request Exceeded (Limit: 20)');
