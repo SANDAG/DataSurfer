@@ -904,7 +904,7 @@ $app->get('/census/:year/:geotype/:zone/transportation', function ($year, $geoty
     if (!$datasource_id)
         $app->halt(400, 'Invalid year or series id');
         
-    $transportationtoWorkSql = " select  geography_zone {$geotype} ,{$year} Yearnumber,
+    $transportationtoWorkSql = " select  geography_zone {$geotype} ,{$year} as Year,
                 unnest(array[
                     'Drive Alone',
                     'Carpool',
@@ -921,7 +921,7 @@ $app->get('/census/:year/:geotype/:zone/transportation', function ($year, $geoty
                 emp_mode_walk,
                 emp_mode_others + emp_mode_motor,
                 emp_mode_home
-                ]) as Number
+                ]) as population
                 from app.acs_means_of_trans($1, $2, $3 );";
                     
     if( $year == "2010"){
@@ -941,7 +941,7 @@ $app->get('/census/:year/:geotype/:zone/employmentstatus', function ($year, $geo
     if (!$datasource_id)
     $app->halt(400, 'Invalid year or series id');
 
-    $employmentStatusSql = "select '$zone' as {$geotype} ,{$year}  Yearnumber,
+		$employmentStatusSql = "select '$zone' as {$geotype} ,{$year}  as Year,
         unnest( array[ 'Population age 16 and older',
             'Armed forces',
             'Civilian employed',
@@ -977,7 +977,7 @@ $app->get('/census/:year/:geotype/:zone/povertystatus', function ($year, $geotyp
         
     if (!$datasource_id)
     $app->halt(400, 'Invalid year or series id');
-    $povertyStatusSql = "select geography_zone  {$geotype}, {$year} Yearnumber,
+		$povertyStatusSql = "select geography_zone  {$geotype}, {$year} as Year,
             unnest(array[   'Total',
                     'Above Poverty',
                     'Below Poverty'
@@ -985,7 +985,7 @@ $app->get('/census/:year/:geotype/:zone/povertystatus', function ($year, $geotyp
             unnest(array[pop_poverty,
                 pop_poverty_above,
                 pop_poverty_below
-                ]) as Number            
+                ]) as population            
             from app.acs_poverty_status($1, $2, $3 );";
     
     if( $year == "2010" ){
@@ -1004,7 +1004,7 @@ $app->get('/census/:year/:geotype/:zone/education', function ($year, $geotype, $
         if (!$datasource_id)
         $app->halt(400, 'Invalid year or series id');
         
-        $educationalAttainmentSql = " select  geography_zone {$geotype} ,{$year} Yearnumber,
+		$educationalAttainmentSql = " select  geography_zone {$geotype} ,{$year} as Year,
             unnest(array[ 'Total Population age 25 and older',
                 'Less than high school',
                 'High School grad including equivalency',
@@ -1037,7 +1037,7 @@ $app->get('/census/:year/:geotype/:zone/language', function ($year, $geotype, $z
         
         if (!$datasource_id)
         $app->halt(400, 'Invalid year or series id');
-        $languageSpokenSql = "select geography_zone  {$geotype} , {$year} Yearnumber,
+		$languageSpokenSql = "select geography_zone  {$geotype} , {$year} as Year,
             unnest(array['Total age 5 and older' , 
                 'Speaks only English',
                 'Speaks Spanish' , 
