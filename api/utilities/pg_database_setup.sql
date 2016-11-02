@@ -643,12 +643,12 @@ INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civi
 INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (5, 'whtrade', 'Wholesale Trade', TRUE);
 INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (6, 'retrade', 'Retail Trade', TRUE);
 INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (7, 'twu', 'Transporation, Warehousing, and Utilities', TRUE);
-INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (8, 'info', 'Information Systems', TRUE);
+INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (8, 'info', 'Information', TRUE);
 INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (9, 'fre', 'Finance and Real Estate', TRUE);
 INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (10, 'pbs', 'Professional and Business Services', TRUE);
-INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (11, 'edhs', 'Education and Healthcare', TRUE);
-INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (12, 'lh', 'Liesure and Hospitality', TRUE);
-INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (13, 'os', 'Office Services', TRUE);
+INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (11, 'edhs', 'Education and Health Services', TRUE);
+INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (12, 'lh', 'Leisure and Hospitality', TRUE);
+INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (13, 'os', 'Other Services', TRUE);
 INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (14, 'gov', 'Government', TRUE);
 INSERT INTO dim.employment_type (employment_type_id, short_name, full_name, civilian) VALUES (15, 'sedw', 'Self-Employed', TRUE);
 
