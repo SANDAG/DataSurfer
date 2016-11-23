@@ -1124,7 +1124,7 @@ $app->get('/census/2010/:geotype/:zones+/export/xlsx', function ( $geoType, $zon
         //******* 10 Household TypePresenceUnder 18 **************
         $householdsTypeByUnder18Array[0] = [ ucwords($geoType), 'YEAR', 'FAMILY TYPE' , 'TOTAL' , 'WITH PERSONS U18', 'WITHOUT PERSONS U18'];
         //******* 11 HousingUnitsType **************
-        $housingUnitsTypeArray[0] = [ ucwords($geoType), 'YEAR', 'UNIT TYPE', 'UNITS',  'OCCUPIED', 'PERCENTAGE'];
+		$housingUnitsTypeArray[0] = [ ucwords($geoType), 'YEAR', 'UNIT TYPE', 'UNITS',  'OCCUPIED', 'POPULATION_OCCUPIED', 'PERSONS_PER_HOUSEHOLD'];
         //******* 12 House Value **************
         $housingValueArray[0] = [ ucwords($geoType), 'YEAR', 'UNITS', 'NUMBER'];
         //******* 13 Yr House Built **************
@@ -1312,7 +1312,7 @@ $app->get('/census/2010/:geotype/:zones+/export/xlsx', function ( $geoType, $zon
                 if (is_array($housingUnitsTypeZoneArray)) { 
                     
                     foreach($housingUnitsTypeZoneArray as $arr)
-                        $housingUnitsTypeArray[$housingUnitsTypeIterator++] = [$arr[$geoType], $arr['year'], $arr['structure_type'], $arr['units'], $arr['occupied'], $arr['percent_of_units']];
+						$housingUnitsTypeArray[$housingUnitsTypeIterator++] = [$arr[$geoType], $arr['year'], $arr['structure_type'], $arr['units'], $arr['occupied'], $arr['population_occupied'], $arr['persons_per_household']];
                 }
                 //******* 12.  HOUSING VALUE***************************************
                 $housingValue_file_name = strtolower(join("_", array('housingValue', "censusacs", $year, $geoType, $zone)).".json");
