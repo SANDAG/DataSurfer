@@ -3276,13 +3276,13 @@ function loadDetailChartFour(){
                            // var cKey = obj.means_of_trans.replace(/ /g, "").toLowerCase();
                             //colors.push(fontTransportationCensus[cKey][0]);
 
-                            arrMeans.push(obj.number);
+                            arrMeans.push(obj.population);
                            // alert('chartCensus4 : ' + cKey + '  :   ' + ' numbers: ' + obj.number + 'colors: ' + fontTransportationCensus['means'][0]);
                             //if (obj.number > max) {
                             //    max = obj.number;
                             //}
 
-                            sum_key += obj.number;
+                            sum_key += obj.population;
 
                            
                         }

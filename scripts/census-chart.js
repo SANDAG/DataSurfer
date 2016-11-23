@@ -500,10 +500,10 @@ function chartCensus4() {
                         cKey = "transit";
                     categories.push(cKey);
                   
-                    arrMeans.push(obj.number);
+                    arrMeans.push(obj.population);
                   
 
-                    sum_key += obj.number;
+                    sum_key += obj.population;
 
                 }
                 $('#set_location_popuplate').val(sum_key);
