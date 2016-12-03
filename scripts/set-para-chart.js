@@ -1002,7 +1002,7 @@ function reDetailChartCensus2() {
 /* reChartCensus4 -- mode of transportation to work chart */
 function reChartCensus4() {
     if ($('#set_location_popuplate').val() > 0) {
-        //alert('set-para-chart.js in reChartCensus4() ');
+     
         para_over_transportation.series = arrDataTransportation;
         para_over_transportation.xAxis.categories = categories_over_transportation;
         para_over_transportation.yAxis.max = max_over_transportation;
@@ -1152,6 +1152,8 @@ function reDetailChartCensus4() {
 
 /* reChartCensus5 -- language spoken at home chart */
 function reChartCensus5() {
+  
+    if ($('#set_location_popuplate').val() > 0) {
     var window_width = $(window).width();
     para_over_language.series = arrDataLanguage;
     para_over_language.xAxis.categories = categories_over_language;
@@ -1248,6 +1250,44 @@ function reChartCensus5() {
     para_detail_language.yAxis.title.style.fontSize = detail_axisLable;
     var chart_detail_language = new Highcharts.Chart(para_detail_language, function (objChart) { });
     createMenu('detail_4');
+    } else {
+     
+        $('#chart-5').highcharts({
+            chart: {
+                style: {
+                    color: color,
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: '',
+                style: {
+                    color: color,
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: 'Random data',
+                data: []
+            }],
+            lang: {
+                noData: "Data not available."
+            },
+            noData: {
+                style: {
+                    fontWeight: 'normal',
+                    fontSize: '12pt',
+                    fontFamily: chart_fontFamily,
+                    color: color
+                }
+            },
+            exporting: {
+                enabled: false
+            }
+        });
+    }
 }
 /* end of reChartCensus5 -- language spoken at home chart */
 
@@ -2984,8 +3024,9 @@ function loadDetailChartTwo(){
                             $('#download_report').selectpicker('refresh');
                         }
                     }
-                }
+                
                 return 1;
+                }
             },
             error: function (request, status, error) {
                 console.log($('#url_employmentstatus').val());
@@ -3240,7 +3281,7 @@ function loadDetailChartFour(){
         $('#header_label').html('<p>Select a section of the chart or a gender to show or hide data. <br class="hidden-xs" />Use the chart icon to download the chart image only.</p>');
 
     } else if (pck_source_type == "census") {
-        //alert(' in set-para-chart.js loaddetailchartfour() ');
+        
             $('#chart-detail').addClass("chart-frame-248");
             $('#chart-detail_2').addClass("chart-frame-248");
             $('#chart-detail_3').addClass("chart-frame-380");

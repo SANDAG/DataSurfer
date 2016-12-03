@@ -276,7 +276,7 @@ function loadChart() {
 function chartCensus2() {
     $('#chart-2').addClass("chart-frame-cencus");
     $('#chart-detail_2').addClass("chart-frame-cencus");
-    //alert('chartCensus2');
+   
     $.ajax({
         url: api_url,
         type: "POST",
@@ -732,7 +732,7 @@ function chartCensus5() {
                             }
                             if( !isInArray("Other language", categories )){
                                 categories.push("Other language");
-                               // alert('census-chart.js chartCensus5  categories : ' + obj.population + ' number is: ' + obj.total);
+                              
                             }
                             //if (obj.total > max)
                             //    max = obj.total;
@@ -785,8 +785,7 @@ function chartCensus5() {
                     return a.name - b.name;
                 })
 
-               
-                if ($('#set_location_popuplate').val() > 0) {
+               // if ($('#set_location_popuplate').val() > 0) {
                     var window_width = $(window).width();
                     arrDataLanguage = arrData;
 
@@ -916,6 +915,7 @@ function chartCensus5() {
                             });
                         }
                     } else {
+                        if ($('#set_location_popuplate').val() > 0) {
                         var chart_over_language = new Highcharts.Chart(para_over_language, function (objChart) {
                             $('#loading-section').addClass("hide");
                             $('.site-header').css({ "z-index": '' });
@@ -926,6 +926,56 @@ function chartCensus5() {
                             drawChart("transportation");
                            
                         });
+                    }
+                        else {
+                        
+                            $('#link_language').addClass('hide');
+                            $('#loading-section').addClass("hide");
+                            $('.site-header').css({ "z-index": '' });
+                            $('#overview-body').removeClass("visibility");
+
+                            $('#chart-5').highcharts({
+                                chart: {
+                                    style: {
+                                        color: color,
+                                    }
+                                },
+                                credits: {
+                                    enabled: false
+                                },
+                                title: {
+                                    text: '',
+                                    style: {
+                                        color: color,
+                                    }
+                                },
+                                series: [{
+                                    type: 'pie',
+                                    name: 'Random data',
+                                    data: []
+                                }],
+                                lang: {
+                                    noData: "No residents in selected area."
+                                },
+                                noData: {
+                                    style: {
+                                        fontWeight: 'normal',
+                                        fontSize: '12pt',
+                                        fontFamily: chart_fontFamily,
+                                        color: color
+                                    }
+                                },
+                                exporting: {
+                                    enabled: false
+                                }
+                            }, function () {
+                             
+                                drawChart("education");
+                                drawChart("employmentstatus");
+                                drawChart("transportation");
+                            });
+                                
+                        } // end of #set_location_popuplate
                     }
 
                     var width = $(".chart-list").width();
@@ -985,12 +1035,11 @@ function chartCensus5() {
                         $('#download_report').prop('disabled', false);
                         $('#download_report').selectpicker('refresh');
                     }
-                    //    }
-                    // });
                 
-            }// if population exists
             return 1;
             } // end of res.length
+            
+            
         },
         error: function (request, status, error) {
             console.log($('#url_language').val());

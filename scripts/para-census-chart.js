@@ -778,7 +778,7 @@ var para_over_transportation = {
         align: 'left',
     },
     lang: {
-        noData: "No residents in selected area.-------------"
+        noData: "No residents in selected area."
     },
     noData: {
         style: {
