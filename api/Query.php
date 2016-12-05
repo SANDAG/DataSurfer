@@ -87,6 +87,7 @@ class Query {
                 "sra"=>[53],
                 "supervisorial"=>[55],
                 "tract"=>[58],
+                "transit"=>[66],
                 "unified"=>[61],
                 "zip"=>[72]
             ],
@@ -102,6 +103,7 @@ class Query {
                 "sra"=>[53],
                 "supervisorial"=>[56],
                 "tract"=>[59],
+                "transit"=>[66],
                 "unified"=>[62],
                 "zip"=>[73]
             ]
@@ -119,6 +121,7 @@ class Query {
                 "sra"=>[53],
                 "supervisorial"=>[56],
                 "tract"=>[59],
+                "transit"=>[66],
                 "unified"=>[62],
                 "zip"=>[73]
             ],
@@ -134,6 +137,7 @@ class Query {
                 "sra"=>[53],
                 "supervisorial"=>[56],
                 "tract"=>[59],
+                "transit"=>[66],
                 "unified"=>[138],
                 "zip"=>[139]
             ],
@@ -149,6 +153,7 @@ class Query {
                 "sra"=>[53],
                 "supervisorial"=>[56],
                 "tract"=>[59],
+                "transit"=>[66],
                 "unified"=>[138],
                 "zip"=>[139]
             ],
@@ -164,6 +169,7 @@ class Query {
                 "sra"=>[53],
                 "supervisorial"=>[56],
                 "tract"=>[59],
+                "transit"=>[66],
                 "unified"=>[138],
                 "zip"=>[139]
             ],
@@ -179,6 +185,7 @@ class Query {
                 "sra"=>[53],
                 "supervisorial"=>[56],
                 "tract"=>[59],
+                "transit"=>[66],
                 "unified"=>[138],
                 "zip"=>[139]
             ],
@@ -194,6 +201,7 @@ class Query {
                 "sra"=>[53],
                 "supervisorial"=>[56],
                 "tract"=>[59],
+                "transit"=>[66],
                 "unified"=>[138],
                 "zip"=>[139]
             ]
@@ -211,6 +219,7 @@ class Query {
                 "sra"=>[53],
                 "supervisorial"=>[55],
                 "tract"=>[59],
+                "transit"=>[66],
                 "unified"=>[61],
                 "zip"=>[73]
             ],
@@ -226,6 +235,7 @@ class Query {
                 "sra"=>[53],
                 "supervisorial"=>[56],
                 "tract"=>[59],
+                "transit"=>[66],
                 "unified"=>[62],
                 "zip"=>[73]
             ]

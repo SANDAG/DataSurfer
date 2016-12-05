@@ -14,23 +14,6 @@ require 'xlsxwriter.class.php';
 
 \Slim\Slim::registerAutoloader();
 
-//define column mappings
-$geotypes = [
-        "jurisdiction" => "city_name",
-        "region" => "region_name",
-        "zip" => "zip",
-        "msa" => "msa_name",
-        "sra" => "sra_name",
-        "tract" => "tract_name",
-        "elementary" => "elementary_name",
-        "secondary" => "high_school_name",
-        "unified" => "unified_name",
-        "college" => "community_college_name",
-        "sdcouncil" => "council",
-        "supervisorial" => "supervisorial",
-        "cpa" => "cpa_name"
-];
-
 $app = new \Slim\Slim();
 
 $app->notFound(function() use ($app)
