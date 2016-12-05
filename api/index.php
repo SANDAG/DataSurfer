@@ -455,15 +455,15 @@ $app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, 
 
         })->conditions(array('datasource' => 'forecast|estimate', 'year' => '(\d){2,4}'));
 
-$app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, $year, $geotype) use ($app)
+$app->get('/census/2000/:geotype/all/export/xlsx', function ($geotype) use ($app)
 {
-    $datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
+    $datasource_id = Query::getInstance()->getDatasourceId('census', 2000);
         
     if (!$datasource_id)
         $app->halt(400, 'Invalid year or series id');
         
     $ts = round(microtime(true) * 1000);
-    $file_name = strtolower(join("_", array($datasource, $year, $geotype))."_{$ts}.xlsx");
+    $file_name = strtolower(join("_", array('census', 2000, $geotype))."_{$ts}.xlsx");
         
     $res = $app->response();
     $res['Content-Description'] = 'File Transfer';
@@ -574,7 +574,7 @@ $app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, 
             
             $writer->writeToStdOut();
 
-        })->conditions(array('datasource'=>'census' , 'year' => '2000'));
+        });
             
 
 $app->get('/:datasource/:year/:geotype/:zones+/export/xlsx', function ($datasource, $year, $geotype, $zones) use ($app)
@@ -689,11 +689,10 @@ $app->get('/:datasource/:year/:geotype/:zones+/export/xlsx', function ($datasour
             
             $writer->writeToStdOut();
         //})->conditions(array('datasource' => 'forecast|census|estimate'));
-        })->conditions(array('datasource' => 'forecast|estimate'));
+})->conditions(array('datasource' => 'forecast|estimate'));
 
 
-//$app->get('/census/:year/:geotype/:zones+/export/xlsx', function ($datasource, $year, $geotype, $zones) use ($app)
-$app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geotype, $zones) use ($app)
+$app->get('/census/2000/:geotype/:zones+/export/xlsx', function ( $geotype, $zones) use ($app)
     {
         if (count($zones) > 20)
         {
@@ -703,13 +702,13 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoty
         
         $zonelist = '{'.strtolower(implode(',', $zones)).'}';
         $datasource = "census";
-        $datasource_id = Query::getInstance()->getDatasourceId($datasource, $year);
+        $datasource_id = Query::getInstance()->getDatasourceId('census', 2000);
         
         if (!$datasource_id)
         $app->halt(400, 'Invalid year or series id');
         
         $ts = round(microtime(true) * 1000);
-        $file_name = strtolower(join("_", array($datasource, $year, $geotype))."_{$ts}.xlsx");
+        $file_name = strtolower(join("_", array('census', 2000, $geotype))."_{$ts}.xlsx");
         
         $res = $app->response();
         $res['Content-Description'] = 'File Transfer';
@@ -803,7 +802,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoty
             }
             
             $writer->writeToStdOut();
-        })->conditions(array( 'year' => '2000' ));
+        });
 
 //Forecast - Ethnicity Change
 $app->get('/forecast/:series/:geotype/:zone/ethnicity/change', function ($series, $geotype, $zone) use ($app)
@@ -888,7 +887,7 @@ $app->get('/census/:year/:geotype/:zone/transportation', function ($year, $geoty
     if (!$datasource_id)
         $app->halt(400, 'Invalid year or series id');
         
-    $transportationtoWorkSql = " select  geography_zone {$geotype} ,{$year} Yearnumber,
+    $transportationtoWorkSql = " select  geography_zone {$geotype} ,{$year} as Year,
                 unnest(array[
                     'Drive Alone',
                     'Carpool',
@@ -905,7 +904,7 @@ $app->get('/census/:year/:geotype/:zone/transportation', function ($year, $geoty
                 emp_mode_walk,
                 emp_mode_others + emp_mode_motor,
                 emp_mode_home
-                ]) as Number
+                ]) as population
                 from app.acs_means_of_trans($1, $2, $3 );";
                     
     if( $year == "2010"){
@@ -925,7 +924,7 @@ $app->get('/census/:year/:geotype/:zone/employmentstatus', function ($year, $geo
     if (!$datasource_id)
     $app->halt(400, 'Invalid year or series id');
 
-    $employmentStatusSql = "select '$zone' as {$geotype} ,{$year}  Yearnumber,
+		$employmentStatusSql = "select '$zone' as {$geotype} ,{$year}  as Year,
         unnest( array[ 'Population age 16 and older',
             'Armed forces',
             'Civilian employed',
@@ -946,10 +945,17 @@ $app->get('/census/:year/:geotype/:zone/employmentstatus', function ($year, $geo
             as female
         from app.acs_employment_status_acs( $1, $2, $3);";
         
+		$zone_fix_case = mb_convert_case($zone, MB_CASE_TITLE, 'utf-8');
+		    
     if( $year == "2010"){
-        $json = Query::getInstance()->getResultAsJson( $employmentStatusSql, 9, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
+			$json = Query::getInstance()->getResultAsJson( $employmentStatusSql, 9, $geotype, str_replace( "32Nd", "32nd", $zone_fix_case));
     }elseif( $year == "2000" ){
-        $json = Query::getInstance()->getResultAsJson( $employmentStatusSql, 12, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
+			if( stripos( $zone_fix_case, "32ND" ) !== FALSE ){
+				$json = Query::getInstance()->getResultAsJson( $employmentStatusSql, 12, $geotype, str_replace( "32Nd", "32nd", $zone_fix_case));
+			}elseif( stripos( $zone_fix_case, "ncfua" ) !== FALSE ){
+				$json = Query::getInstance()->getResultAsJson( $employmentStatusSql, 12, $geotype, str_replace( "Ncfua", "NCFUA",$zone_fix_case));
+			}else		
+				$json = Query::getInstance()->getResultAsJson( $employmentStatusSql, 12, $geotype, $zone_fix_case );
     }
     echo $json;
 })->conditions(array('year' => '2000|2010'));
@@ -961,7 +967,7 @@ $app->get('/census/:year/:geotype/:zone/povertystatus', function ($year, $geotyp
         
     if (!$datasource_id)
     $app->halt(400, 'Invalid year or series id');
-    $povertyStatusSql = "select geography_zone  {$geotype}, {$year} Yearnumber,
+		$povertyStatusSql = "select geography_zone  {$geotype}, {$year} as Year,
             unnest(array[   'Total',
                     'Above Poverty',
                     'Below Poverty'
@@ -969,7 +975,7 @@ $app->get('/census/:year/:geotype/:zone/povertystatus', function ($year, $geotyp
             unnest(array[pop_poverty,
                 pop_poverty_above,
                 pop_poverty_below
-                ]) as Number            
+                ]) as population            
             from app.acs_poverty_status($1, $2, $3 );";
     
     if( $year == "2010" ){
@@ -988,7 +994,7 @@ $app->get('/census/:year/:geotype/:zone/education', function ($year, $geotype, $
         if (!$datasource_id)
         $app->halt(400, 'Invalid year or series id');
         
-        $educationalAttainmentSql = " select  geography_zone {$geotype} ,{$year} Yearnumber,
+		$educationalAttainmentSql = " select  geography_zone {$geotype} ,{$year} as Year,
             unnest(array[ 'Total Population age 25 and older',
                 'Less than high school',
                 'High School grad including equivalency',
@@ -1005,10 +1011,18 @@ $app->get('/census/:year/:geotype/:zone/education', function ($year, $geotype, $
             ]) as population
             from app.acs_pop_by_educational_attainment( $1, $2, $3 );";
         
+		$zone_fix_case = mb_convert_case($zone, MB_CASE_TITLE, 'utf-8');
+		
         if( $year == "2010" ){
-            $json = Query::getInstance()->getResultAsJson( $educationalAttainmentSql, 9, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
+			//$json = Query::getInstance()->getResultAsJson( $educationalAttainmentSql, 9, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
+			$json = Query::getInstance()->getResultAsJson( $educationalAttainmentSql, 9, $geotype, str_replace( "32Nd", "32nd", $zone_fix_case));
         }elseif( $year == "2000" ){
-            $json = Query::getInstance()->getResultAsJson( $educationalAttainmentSql, 12, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
+			if( stripos( $zone_fix_case, "32ND" ) !== FALSE ){
+				$json = Query::getInstance()->getResultAsJson( $educationalAttainmentSql, 12, $geotype, str_replace( "32Nd", "32nd", $zone_fix_case));
+			}elseif( stripos( $zone_fix_case, "ncfua" ) !== FALSE ){
+				$json = Query::getInstance()->getResultAsJson( $educationalAttainmentSql, 12, $geotype, str_replace( "Ncfua", "NCFUA", $zone_fix_case));
+			}else
+				$json = Query::getInstance()->getResultAsJson( $educationalAttainmentSql, 12, $geotype, $zone_fix_case);
         }
         
         echo $json;     
@@ -1021,7 +1035,7 @@ $app->get('/census/:year/:geotype/:zone/language', function ($year, $geotype, $z
         
         if (!$datasource_id)
         $app->halt(400, 'Invalid year or series id');
-        $languageSpokenSql = "select geography_zone  {$geotype} , {$year} Yearnumber,
+		$languageSpokenSql = "select geography_zone  {$geotype} , {$year} as Year,
             unnest(array['Total age 5 and older' , 
                 'Speaks only English',
                 'Speaks Spanish' , 
@@ -1043,18 +1057,27 @@ $app->get('/census/:year/:geotype/:zone/language', function ($year, $geotype, $z
                 pop_5plus_other_no_english] ) as total
             from app.acs_pop_by_language_spoken( $1, $2, $3);";
         
+		$zone_fix_case = mb_convert_case($zone, MB_CASE_TITLE, 'utf-8');
+		
         if( $year == "2010"){
-            $json = Query::getInstance()->getResultAsJson( $languageSpokenSql, 9, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
+				$json = Query::getInstance()->getResultAsJson( $languageSpokenSql, 9, $geotype, str_replace( "32Nd", "32nd", $zone_fix_case));
         
         }elseif( $year == "2000" ){
-            $json = Query::getInstance()->getResultAsJson( $languageSpokenSql, 12, $geotype, str_replace( "32Nd", "32nd", mb_convert_case($zone, MB_CASE_TITLE, 'utf-8')));
+			if( stripos( $zone_fix_case, "32ND" ) !== FALSE ){
+				$json = Query::getInstance()->getResultAsJson( $languageSpokenSql, 12, $geotype, str_replace( "32Nd", "32nd", $zone_fix_case));
+			}elseif( stripos( $zone_fix_case, "ncfua" ) !== FALSE ){
+				$json = Query::getInstance()->getResultAsJson( $languageSpokenSql, 12, $geotype, str_replace( "Ncfua", "NCFUA", $zone_fix_case));
+			}else
+				$json = Query::getInstance()->getResultAsJson( $languageSpokenSql, 12, $geotype, $zone_fix_case);
         }
         echo $json;
 })->conditions(array('year' => '2000|2010'));
 
-$app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoType, $zones) use ($app)
+$app->get('/census/2010/:geotype/:zones+/export/xlsx', function ( $geoType, $zones) use ($app)
 {
-    echo Query::getInstance()->getZoneAsGeoJson($datasource, $series, $geotype, $zone);
+    $datasource = 'census';
+    $year = 2010;
+    //echo Query::getInstance()->getZoneAsGeoJson($datasource, $year, $geotype, $zone);
         if (count($zones) > 20)
         {
             $app->halt(400, 'Max Zone Request Exceeded (Limit: 20)');
@@ -1106,7 +1129,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
         //******* 10 Household TypePresenceUnder 18 **************
         $householdsTypeByUnder18Array[0] = [ ucwords($geoType), 'YEAR', 'FAMILY TYPE' , 'TOTAL' , 'WITH PERSONS U18', 'WITHOUT PERSONS U18'];
         //******* 11 HousingUnitsType **************
-        $housingUnitsTypeArray[0] = [ ucwords($geoType), 'YEAR', 'UNIT TYPE', 'UNITS',  'OCCUPIED', 'PERCENTAGE'];
+		$housingUnitsTypeArray[0] = [ ucwords($geoType), 'YEAR', 'UNIT TYPE', 'UNITS',  'OCCUPIED', 'POPULATION_OCCUPIED', 'PERSONS_PER_HOUSEHOLD'];
         //******* 12 House Value **************
         $housingValueArray[0] = [ ucwords($geoType), 'YEAR', 'UNITS', 'NUMBER'];
         //******* 13 Yr House Built **************
@@ -1294,7 +1317,7 @@ $app->get('/census/:year/:geotype/:zones+/export/xlsx', function ( $year, $geoTy
                 if (is_array($housingUnitsTypeZoneArray)) { 
                     
                     foreach($housingUnitsTypeZoneArray as $arr)
-                        $housingUnitsTypeArray[$housingUnitsTypeIterator++] = [$arr[$geoType], $arr['year'], $arr['structure_type'], $arr['units'], $arr['occupied'], $arr['percent_of_units']];
+						$housingUnitsTypeArray[$housingUnitsTypeIterator++] = [$arr[$geoType], $arr['year'], $arr['structure_type'], $arr['units'], $arr['occupied'], $arr['population_occupied'], $arr['persons_per_household']];
                 }
                 //******* 12.  HOUSING VALUE***************************************
                 $housingValue_file_name = strtolower(join("_", array('housingValue', "censusacs", $year, $geoType, $zone)).".json");
