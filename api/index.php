@@ -357,8 +357,10 @@ $app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, 
 
     //*******AGE*************
     $ageSql = "SELECT geozone as {$geotype}, yr as year, sex, age_group as group_10yr, population FROM fact.summary_age
-                WHERE datasource_id = :datasource_id AND geotype = :geotype AND age_group <> 'Total Population'
-                ORDER BY yr, sex, age_group";
+                WHERE datasource_id = :datasource_id AND geotype = :geotype AND age_group <> 'Total Population' "
+                .($datasource === "estimate" ? "and yr = {$year} " : "")
+                ."ORDER BY yr, sex, age_group";
+
     $writer->writeSheet(
                 Query::getInstance()->getResultAsArray($ageSql, $datasource_id, $geotype, null),
                 'Age'
@@ -453,7 +455,7 @@ $app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, 
     
     $writer->writeToStdOut();
 
-        })->conditions(array('datasource' => 'forecast|estimate', 'year' => '(\d){2,4}'));
+})->conditions(array('datasource' => 'forecast|estimate', 'year' => '(\d){2,4}'));
 
 $app->get('/census/2000/:geotype/all/export/xlsx', function ($geotype) use ($app)
 {
@@ -615,8 +617,9 @@ $app->get('/:datasource/:year/:geotype/:zones+/export/xlsx', function ($datasour
                 'POPULATION' => 'integer'
                 );
             $ageSql = "SELECT geozone as {$geotype}, yr as year, sex, age_group as group_10yr, population FROM fact.summary_age
-    WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) AND age_group <> 'Total Population'
-    ORDER BY yr, sex, age_group";
+                        WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) AND age_group <> 'Total Population' "
+                        .($datasource === "estimate" ? "and yr = {$year} " : "")
+                        ."ORDER BY yr, sex, age_group";
             $ageArray = Query::getInstance()->getResultAsArray($ageSql, $datasource_id, $geotype, $zonelist);
             
             //*******ETHNICITY*************
