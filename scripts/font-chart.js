@@ -104,7 +104,8 @@ var group_padding_income = 0.17;
 
 /* overview language*/
 var margin_top_language = 27;
-var margin_bottom_language = 82;
+// var margin_bottom_language = 82; 
+var margin_bottom_language = 52;
 var margin_left_language = 69;
 
 var margin_right_language = 90;
