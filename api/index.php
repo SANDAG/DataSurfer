@@ -1159,18 +1159,19 @@ $app->get('/census/2010/:geotype/:zones+/export/xlsx', function ( $geoType, $zon
         $grossRentHouseholdIncomeArray[0] = [ ucwords($geoType), 'YEAR', 'PERCENT', 'NUMBER'];
         //******* 17 Vehicle Availability **************
         $vehicleAvailabilityArray[0] = [ ucwords($geoType), 'YEAR', 'AVAILABILITY', 'NUMBER'];
-        //******* 18 Place of work( CountyLevel) **************
+		//******* 18 Employment Status **************
+		$employmentStatusArray[0] = [ ucwords($geoType), 'YEAR', 'STATUS', 'MALE', 'FEMALE' ];
+        //******* 19 Place of work( CountyLevel) **************
         $placeofWorkArray[0] = [ ucwords($geoType), 'YEAR', 'PLACE OF WORK', 'NUMBER'];
-        //******* 19 Transportation to Work **************
+        //******* 20 Transportation to Work **************
         $transportationtoWorkArray[0] = [ ucwords($geoType), 'YEAR', 'MEANS OF TRANSPORTATION', 'NUMBER'];
-        //******* 20 Travel Time to Work **************
+        //******* 21 Travel Time to Work **************
         $travelTimetoWorkArray[0] = [ ucwords($geoType), 'YEAR', 'TRAVEL TIME TO WORK', 'NUMBER'];
-        //******* 21 Employment Status **************
-        $employmentStatusArray[0] = [ ucwords($geoType), 'YEAR', 'STATUS', 'MALE', 'FEMALE' ];
-        //******* 22 Occupation **************
+		//******* 22 Industry **************
+		$industryArray[0] = [ ucwords($geoType), 'YEAR', 'INDUSTRY', 'NUMBER'];
+        //******* 23 Occupation **************
         $occupationArray[0] = [ ucwords($geoType), 'YEAR', 'OCCUPATION', 'NUMBER'];
-        //******* 23 Industry **************
-        $industryArray[0] = [ ucwords($geoType), 'YEAR', 'INDUSTRY', 'NUMBER'];
+        
         //******* 24 Household Income **************
         $householdIncomeArray[0] = [ ucwords($geoType), 'YEAR', 'INCOME', 'NUMBER'];
         //******* 25 Earnings and Income **************
@@ -1417,7 +1418,17 @@ $app->get('/census/2010/:geotype/:zones+/export/xlsx', function ( $geoType, $zon
                     foreach($vehicleAvailabilityZoneArray as $arr)
                         $vehicleAvailabilityArray[$vehicleAvailabilityIterator++] = [$arr[$geoType], $arr['year'], $arr['availability'], $arr['number']];
                 }
-                //******* 18 Place of work( CountyLevel) ***************************************
+				//******* 18 Employment Status ***************************************
+				$employmentStatus_file_name = strtolower(join("_", array('employmentStatus', "censusacs", $year, $geoType, $zone)).".json");
+				$employmentStatus_file_dir = join(DIRECTORY_SEPARATOR, array(".","json", "censusacs", $year, $geoType));
+				$employmentStatus_file_path = join(DIRECTORY_SEPARATOR, array($employmentStatus_file_dir, $employmentStatus_file_name));
+				$employmentStatusZoneArray = json_decode(file_get_contents($employmentStatus_file_path), true); 
+				if (is_array($employmentStatusZoneArray)){
+					
+					foreach($employmentStatusZoneArray as $arr)
+						$employmentStatusArray[$employmentStatusIterator++] = [$arr[$geoType], $arr['year'], $arr['status'], $arr['male'], $arr['female']];
+				}
+                //******* 19 Place of work( CountyLevel) ***************************************
                 $placeofWork_file_name = strtolower(join("_", array('placeofWork', "censusacs", $year, $geoType, $zone)).".json");
                 $placeofWork_file_dir = join(DIRECTORY_SEPARATOR, array(".","json", "censusacs", $year, $geoType));
                 $placeofWork_file_path = join(DIRECTORY_SEPARATOR, array($placeofWork_file_dir, $placeofWork_file_name));
@@ -1427,7 +1438,7 @@ $app->get('/census/2010/:geotype/:zones+/export/xlsx', function ( $geoType, $zon
                     foreach($placeofWorkZoneArray as $arr)
                         $placeofWorkArray[$placeofWorkIterator++] = [$arr[$geoType], $arr['year'], $arr['placeofwork'], $arr['number']];
                 }
-                //******* 19 Transportation to Work ***************************************
+                //******* 20 Transportation to Work ***************************************
                 $transportationtoWork_file_name = strtolower(join("_", array('transportationtoWork', "censusacs", $year, $geoType, $zone)).".json");
                 $transportationtoWork_file_dir = join(DIRECTORY_SEPARATOR, array(".","json", "censusacs", $year, $geoType));
                 $transportationtoWork_file_path = join(DIRECTORY_SEPARATOR, array($transportationtoWork_file_dir, $transportationtoWork_file_name));
@@ -1437,7 +1448,7 @@ $app->get('/census/2010/:geotype/:zones+/export/xlsx', function ( $geoType, $zon
                     foreach($transportationtoWorkZoneArray as $arr)
                         $transportationtoWorkArray[$transportationtoWorkIterator++] = [$arr[$geoType], $arr['year'], $arr['means_of_trans'], $arr['number']];
                 }
-                //******* 20 Travel Time to Work ***************************************
+                //******* 21 Travel Time to Work ***************************************
                 $travelTimetoWork_file_name = strtolower(join("_", array('travelTimetoWork', "censusacs", $year, $geoType, $zone)).".json");
                 $travelTimetoWork_file_dir = join(DIRECTORY_SEPARATOR, array(".","json", "censusacs", $year, $geoType));
                 $travelTimetoWork_file_path = join(DIRECTORY_SEPARATOR, array($travelTimetoWork_file_dir, $travelTimetoWork_file_name));
@@ -1457,17 +1468,17 @@ $app->get('/census/2010/:geotype/:zones+/export/xlsx', function ( $geoType, $zon
                     foreach($travelTimetoWorkAverageZoneArray as $arr)
                         $travelTimetoWorkArray[$travelTimetoWorkIterator++] = [$arr[$geoType], $arr['year'], $arr['averagetimetowork'], $arr['acs_avg_travel_time_to_work']];
                 }
-                //******* 21 Employment Status ***************************************
-                $employmentStatus_file_name = strtolower(join("_", array('employmentStatus', "censusacs", $year, $geoType, $zone)).".json");
-                $employmentStatus_file_dir = join(DIRECTORY_SEPARATOR, array(".","json", "censusacs", $year, $geoType));
-                $employmentStatus_file_path = join(DIRECTORY_SEPARATOR, array($employmentStatus_file_dir, $employmentStatus_file_name));
-                $employmentStatusZoneArray = json_decode(file_get_contents($employmentStatus_file_path), true); 
-                if (is_array($employmentStatusZoneArray)){
+				//******* 22 Industry ***************************************
+				$industry_file_name = strtolower(join("_", array('industry', "censusacs", $year, $geoType, $zone)).".json");
+				$industry_file_dir = join(DIRECTORY_SEPARATOR, array(".","json", "censusacs", $year, $geoType));
+				$industry_file_path = join(DIRECTORY_SEPARATOR, array($industry_file_dir, $industry_file_name));
+				$industryZoneArray = json_decode(file_get_contents($industry_file_path), true); 
+				if (is_array($industryZoneArray)){
                     
-                    foreach($employmentStatusZoneArray as $arr)
-                        $employmentStatusArray[$employmentStatusIterator++] = [$arr[$geoType], $arr['year'], $arr['status'], $arr['male'], $arr['female']];
+					foreach($industryZoneArray as $arr)
+						$industryArray[$industryIterator++] = [$arr[$geoType], $arr['year'], $arr['industry'], $arr['number']];
                 }
-                //******* 22 Occupation ***************************************
+                //******* 23 Occupation ***************************************
                 $occupation_file_name = strtolower(join("_", array('occupation', "censusacs", $year, $geoType, $zone)).".json");
                 $occupation_file_dir = join(DIRECTORY_SEPARATOR, array(".","json", "censusacs", $year, $geoType));
                 $occupation_file_path = join(DIRECTORY_SEPARATOR, array($occupation_file_dir, $occupation_file_name));
@@ -1477,16 +1488,7 @@ $app->get('/census/2010/:geotype/:zones+/export/xlsx', function ( $geoType, $zon
                     foreach($occupationZoneArray as $arr)
                         $occupationArray[$occupationIterator++] = [$arr[$geoType], $arr['year'], $arr['occupation'], $arr['total']];
                 }
-                //******* 23 Industry ***************************************
-                $industry_file_name = strtolower(join("_", array('industry', "censusacs", $year, $geoType, $zone)).".json");
-                $industry_file_dir = join(DIRECTORY_SEPARATOR, array(".","json", "censusacs", $year, $geoType));
-                $industry_file_path = join(DIRECTORY_SEPARATOR, array($industry_file_dir, $industry_file_name));
-                $industryZoneArray = json_decode(file_get_contents($industry_file_path), true); 
-                if (is_array($industryZoneArray)){
                     
-                    foreach($industryZoneArray as $arr)
-                        $industryArray[$industryIterator++] = [$arr[$geoType], $arr['year'], $arr['industry'], $arr['number']];
-                }
                 //******* 24 Household Income ***************************************
                 $householdIncome_file_name = strtolower(join("_", array('householdIncome', "censusacs", $year, $geoType, $zone)).".json");
                 $householdIncome_file_dir = join(DIRECTORY_SEPARATOR, array(".","json", "censusacs", $year, $geoType));
@@ -1553,7 +1555,7 @@ $app->get('/census/2010/:geotype/:zones+/export/xlsx', function ( $geoType, $zon
             $objPHPExcel = new XLSXWriter();
             $objPHPExcel->setAuthor("San Diego Association of Governments");
             //******* 1 Race-Ethnicity**************
-            $objPHPExcel->writeSheet($raceEthnicityArray, 'Race-Ethnicity');
+            $objPHPExcel->writeSheet($raceEthnicityArray, 'Race');
             //******* 2. Age and Sex**************
             $objPHPExcel->writeSheet($ageSexArray, 'Age and Sex');
             //******* 3. Marital Status**************
@@ -1561,7 +1563,7 @@ $app->get('/census/2010/:geotype/:zones+/export/xlsx', function ( $geoType, $zon
             //******* 4 HouseholdGroupQuarters**************    
             $objPHPExcel->writeSheet($householdGroupQtrsArray,'HouseholdGroupQuarters' );   
             //******* 5. Age, Race-Ethnicity**************  
-            $objPHPExcel->writeSheet($ethnicityAgeGroupArray, 'Ethnicity by Age');
+			$objPHPExcel->writeSheet($ethnicityAgeGroupArray, 'Age and Race');
             //******* 6. LANGUAGE SPOKEN AT HOME**************
             $objPHPExcel->writeSheet($languageSpokenArray, 'Language Spoken at Home');
             //******* 7. EDUCATIONAL ATTAINMENT**************
@@ -1586,18 +1588,18 @@ $app->get('/census/2010/:geotype/:zones+/export/xlsx', function ( $geoType, $zon
             $objPHPExcel->writeSheet($grossRentHouseholdIncomeArray, 'Gross Rent HouseholdIncome');
             //******* 17 Vehicle Availability **************
             $objPHPExcel->writeSheet($vehicleAvailabilityArray, 'Vehicle Availability');        
-            //******* 18 Place of work( CountyLevel) **************
-            $objPHPExcel->writeSheet($placeofWorkArray, 'Vehicle Availability');                    
-            //******* 19 Transportation to Work **************
+			//******* 18 Employment Status **************
+			$objPHPExcel->writeSheet($employmentStatusArray, 'Employment Status');    
+            //******* 19 Place of work( CountyLevel) **************
+			$objPHPExcel->writeSheet($placeofWorkArray, 'Place of Work');                    
+            //******* 20 Transportation to Work **************
             $objPHPExcel->writeSheet($transportationtoWorkArray,'Transportation to Work');
-            //******* 20 Travel Time to Work **************
+            //******* 21 Travel Time to Work **************
             $objPHPExcel->writeSheet($travelTimetoWorkArray, 'Travel Time to Work');
-            //******* 21 Employment Status **************
-            $objPHPExcel->writeSheet($employmentStatusArray, 'Employment Status');
-            //******* 22 Occupation **************
+			//******* 22 Industry **************
+			$objPHPExcel->writeSheet($industryArray, 'Industry' );
+            //******* 23 Occupation **************
             $objPHPExcel->writeSheet($occupationArray, 'Occupation' );
-            //******* 23 Industry **************
-            $objPHPExcel->writeSheet($industryArray, 'Industry' );
             //******* 24 Household Income **************
             $objPHPExcel->writeSheet($householdIncomeArray, 'Household Income' );
             //******* 25 Earnings and Income **************

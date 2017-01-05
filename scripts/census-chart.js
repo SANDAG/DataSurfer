@@ -164,7 +164,7 @@ function loadChart() {
                         var brightness = 0.2 - (i_counter) / res.length;
                         arrEducation.push({
                             name: categories[i_counter],
-                            y: precise_round((keys[i_counter] / sum_key) * 100, 0),
+                            y: precise_round((keys[i_counter] / sum_key) * 100, 1), // display one tenth
                             color: colors[i_counter],
                             fy: precise_round((keys[i_counter] / sum_key) * 100, 1),
                         });

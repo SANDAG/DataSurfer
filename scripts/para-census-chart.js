@@ -66,7 +66,14 @@ var para_over_education = {
         }
     },
     title: {
-        text: ''
+        text: 'AGE 25 AND OLDER',
+        verticalAlign: 'bottom',
+       
+        style: {
+            color: color,
+            fontSize: overview_axisLable,
+            fontWeight: chart_fontWeight,
+        }
     },
     yAxis: {
         title: {
@@ -145,19 +152,23 @@ var para_over_education = {
                     val = val.toString().replace("0.", ".");
                 }
                 if (str == "Less than high school") {
-                    str = "< Highschool";
+                   // str = "< Highschool";
+                    str = "Less than high school"
                    return str + ':<br>' + val + '%';
                 } else if (str == "High School grad including equivalency") {
-                    str = "Highschool";
+                   // str = "Highschool";
+                    str = "High School grad<br/>including equivalency"
                     return str + ':<br> ' + val + '%';
                 } else if (str == "Some college or Associate degree") {
-                    str = ">=Associate degree";
+                   // str = ">=Associate degree";
+                    str = "Some college or<br/>Associate degree"
                     return str + ':<br> ' + val + '%';
                 } else if (str == "Bachelors degree") {
                     str = "Bachelor's degree";
                     return str + ': <br> ' + val + '%';
-                } else if (str == "Graduate or Professional degree", "population") {
-                    str = ">=Graduate degree";
+                } else if (str == "Graduate or Professional degree") {
+                   // str = ">=Graduate degree";
+                    str = "Graduate or<br/>Professional degree"
                     return str + ':<br> ' + val + '%';
                 } else {
                     return this.point.name.toUpperCase() + ': ' + val + '%';
@@ -280,20 +291,24 @@ var para_detail_education = {
                 var str = this.point.name;
                 var val = this.y;
                 if (str == "Less than high school") {
-                    str = "< Highschool";
+                    // str = "< Highschool";
+                    str = "Less than high school";
                     return str + ': ' + val + '%';
                 } else if (str == "High School grad including equivalency") {
-                    str = "Highschool";
+                    //str = "Highschool";
+                    str = "High School grad including equivalency"
                     return str + ': ' + val + '%';
                 } else if (str == "Some college or Associate degree") {
-                    str = ">=Associate degree";
+                    // str = ">=Associate degree";
+                    str = "Some college or Associate degree"
                     return str + ': ' + val + '%';
                     //  } else if (str == "Bachelor's degree") {
                 } else if (str == "Bachelors degree") {
                     str = "Bachelor's degree";
                     return str + ': ' + val + '%';
-                } else if (str == "Graduate or Professional degree", "population") {
-                    str = "Graduate/Professional degree";
+                } else if (str == "Graduate or Professional degree") {
+                    // str = "Graduate/Professional degree";
+                    str = "Graduate or Professional degree";
                     return str + ': ' + val + '%';
                 } else {
                     return this.point.name.toUpperCase() + ': ' + val + '%';
@@ -669,7 +684,7 @@ var para_detail_employmentstatus = {
         series: {
             pointWidth: point_width_employmentstatus, //width of the column bars irrespective of the chart size
             dataLabels: {
-                enabled: true,
+                enabled: false, // hide dataLabels from the detailed view
             },
             states: {
                 hover: {
@@ -1086,7 +1101,7 @@ var para_detail_transportation = {
         series: {
             pointWidth: point_width_transportation, //width of the column bars irrespective of the chart size
             dataLabels: {
-                enabled: true,
+                enabled: false, // hide dataLabels from the detailed view
             },
             states: {
                 hover: {
@@ -1213,7 +1228,8 @@ var para_over_language = {
             },
         },
         title: {
-            text: 'LANGUAGE SPOKEN AT HOME',
+            //text: 'LANGUAGE SPOKEN AT HOME',
+            text: '',
             offset: offset_x_title_language,
             style: {
                 color: color,
@@ -1231,7 +1247,7 @@ var para_over_language = {
         min: 0,
         max: max_over_language,
         title: {
-            text: 'AGE 5 AND OVER',
+            text: 'AGE 5 AND OLDER',
             align: 'middle',
             style: {
                 color: color,
@@ -1296,9 +1312,16 @@ var para_over_language = {
             var data_Value = this.series.options.data_value;
             var index = categories_over_language.indexOf(this.point.x);
             var population = Highcharts.numberFormat(data_Value[this.point.x], 0, '.', ',');
+            var series_name = this.series.name.toLowerCase();
+            if (series_name == "englishproficient")
+                series_name = "English Proficient";
+            else if (series_name == "englishlimited")
+                series_name = "English Limited";
 
             var str = '<span">Speaks ' + this.point.category + '</span><table>'
-            str += '<tr><td style="text-transform:uppercase;"><span style="color:' + this.series.color + ';text-transform:capitalize;">' + this.series.name.toLowerCase() + ':</span> ';
+            //str += '<tr><td style="text-transform:uppercase;"><span style="color:' + this.series.color + ';text-transform:capitalize;">' + this.series.name.toLowerCase() + ':</span> ';
+            str += '<tr><td style="text-transform:uppercase;"><span style="color:' + this.series.color + ';text-transform:capitalize;">' + series_name + ':</span> ';
+
             str += '<b>' + this.point.y + '%</b></td></tr>';
             str += '<tr><td>Population: <b>' + population + '</b></td></tr>';
             str += '</table>'
@@ -1415,7 +1438,7 @@ var para_detail_language = {
             y: y_label_detail_language,
         },
         title: {
-            text: 'LANGUAGE SPOKEN AT HOME FOR AGE 5 AND OVER',
+            text: 'LANGUAGE SPOKEN AT HOME FOR AGE 5 AND OLDER',
             offset: offset_x_title_detail_language,
             style: {
                 fontSize: detail_axisLable,
@@ -1500,9 +1523,17 @@ var para_detail_language = {
             var data_Value = this.series.options.data_value;
             var index = data_Point.indexOf(this.point.y);
             var population = Highcharts.numberFormat(data_Value[this.point.x], 0, '.', ',');
+            var series_name = this.series.name.toLowerCase();
+
+            if (series_name == "englishproficient")
+                series_name = "English Proficient";
+            else if (series_name == "englishlimited")
+                series_name = "English Limited";
 
             var str = '<span"> Speaks ' + this.point.category + '</span><table>'
-            str += '<tr><td style="text-transform:uppercase;"><span style="color:' + this.series.color + ';text-transform:capitalize;">' + this.series.name.toLowerCase() + ':</span> ';
+            //str += '<tr><td style="text-transform:uppercase;"><span style="color:' + this.series.color + ';text-transform:capitalize;">' + this.series.name.toLowerCase() + ':</span> ';
+            str += '<tr><td style="text-transform:uppercase;"><span style="color:' + this.series.color + ';text-transform:capitalize;">' + series_name + ':</span> ';
+
             str += '<b>' + this.point.y + '%</b></td></tr>';
             str += '<tr><td>Population: <b>' + population + '</b></td></tr>';
             str += '</table>'
