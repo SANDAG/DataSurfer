@@ -103,23 +103,33 @@ $server = $_SERVER['HTTP_HOST'];
 			  Returns PDF<br/>
 			  <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/forecast/13/zip/92101/export/pdf'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/forecast/13/zip/92101/export/pdf</a><br/>
 			  <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/zip/92101/export/pdf'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/zip/92101/export/pdf</a>
-			  <li>Multiple PDF Export (max. 10)</li>
+			  <li>Multiple PDF Export - Maximum 10 - Alternative 1</li>
 			  Returns ZIP<br/>
 			  <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/estimate/2012/jurisdiction/carlsbad/oceanside/vista/export/pdf'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/estimate/2012/jurisdiction/carlsbad/oceanside/vista/export/pdf</a><br/>
-			  <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/jurisdiction/carlsbad/oceanside/vista/export/pdf'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/jurisdiction/carlsbad/oceanside/vista/export/pdf</a>
+			  <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/jurisdiction/carlsbad/oceanside/vista/export/pdf'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/jurisdiction/carlsbad/oceanside/vista/export/pdf</a><br/>
+              <li>Multiple PDF Export - All Reports - Alternative 2</li>
+			  Returns ZIP<br/>
+			  <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/estimate/2012/tract/all/export/pdf'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/estimate/2012/tract/all/export/pdf</a><br/>
+			  <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/zip/all/export/pdf'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/zip/all/export/pdf</a><br/>
 			  <li>Single Excel Export</li>
 			  Returns XLSX<br/>
 			  <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/forecast/13/zip/92101/export/xlsx'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/forecast/13/zip/92101/export/xlsx</a>
 			  <br/>
 			  <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/jurisdiction/Carlsbad/export/xlsx'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/jurisdiction/Carlsbad/export/xlsx</a>
 			  <br/>  
-			<a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/elementary/Fallbrook/export/xlsx'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/elementary/Fallbrook/export/xlsx</a>
-			  <br/> 
-			<li>Multiple Excel Export (max. 10)</li>
+  			  <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/elementary/Fallbrook/export/xlsx'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/elementary/Fallbrook/export/xlsx</a>
+              <br/>
+			  <li>Multiple Excel Export - Maximum 10 - Alternative 1</li>
 			  Returns XLSX<br/>
 			  <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/estimate/2012/jurisdiction/carlsbad/oceanside/vista/export/xlsx'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/estimate/2012/jurisdiction/carlsbad/oceanside/vista/export/xlsx</a>
 			  <br/>
 			  <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/jurisdiction/Carlsbad/Poway/export/xlsx'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/jurisdiction/Carlsbad/Poway/export/xlsx</a>
+			  <br/>
+              <li>Multiple Excel Export - All Reports - Alternative 2</li>
+			  Returns XLSX<br/>
+			  <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/estimate/2012/jurisdiction/all/export/xlsx'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/estimate/2012/jurisdiction/all/export/xlsx</a>
+			  <br/>
+			  <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/tract/all/export/xlsx'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/census/2010/tract/all/export/xlsx</a>
 			  <br/>
 			</ul>
 			<h1>Area Map Images</h1>

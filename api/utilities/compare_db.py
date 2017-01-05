@@ -4,8 +4,8 @@ import time
 import urllib2
 
 base_url = 'http://datasurfer.sandag.org/api'
-comp_url = 'http://localhost/api'
-#comp_url = 'http://datasurfer-dev.sandag.org/api'
+#comp_url = 'http://localhost/api'
+comp_url = 'http://datasurfer-dev.sandag.org/api'
 
 def ordered(obj):
     if isinstance(obj, dict):
@@ -17,7 +17,7 @@ def ordered(obj):
 
 with open('e:/apps/datasurfer/api/utilities/console.log', 'w') as f:
 
-  for datasource in ['estimate', 'census', 'forecast']:
+  for datasource in ['census']: #['estimate', 'census', 'forecast']:
     response = urllib2.urlopen('%s/%s' % (base_url, datasource))
     series_api = json.load(response)
 
@@ -26,11 +26,12 @@ with open('e:/apps/datasurfer/api/utilities/console.log', 'w') as f:
           series_id = record['series']
         else:
           series_id = record['year']
-     
-        response = urllib2.urlopen('%s/%s/%s' % (base_url, datasource, series_id))
-        geo_api = json.load(response)
+        
+        if series_id == 2000:
+          response = urllib2.urlopen('%s/%s/%s' % (base_url, datasource, series_id))
+          geo_api = json.load(response)
 
-        for geo in geo_api:
+          for geo in geo_api:
             geo_id = geo['zone']
 
             response = urllib2.urlopen('%s/%s/%s/%s' % (base_url, datasource, series_id, geo_id))
@@ -56,20 +57,33 @@ with open('e:/apps/datasurfer/api/utilities/console.log', 'w') as f:
                       curl = '%s/%s/%s/%s/%s/%s' % (comp_url, datasource, series_id, geo_id, zone_id, type)
                       curl = curl.replace(' ', '%20')
                       cresponse = urllib2.urlopen(curl)
-                      cjson = json.load(cresponse)
+                      
+                      cjson = json.loads(cresponse.read().replace('null', '0'))
                     except:
                       print "Error: " + curl
                       f.write("Error: " + curl + "\n")
                     
+                    #for bitem in bjson:
+                    #  for citem in cjson:
+                    #    if bitem['unit_type'] == citem['unit_type']:
+                    #      if bitem['unit_type'] == 'Total Units':
+                              
+                    #          f.write(burl + '\n')
+                    #          if bitem['vacancy_rate'] != citem['vacancy_rate']: f.write('ERROR\n')
+                    #          f.write('{0} vacancy: {1}, {2} \n'.format(bitem['unit_type'], bitem['vacancy_rate'], citem['vacancy_rate']))
+                    #          if bitem['occupied'] != citem['occupied']: f.write('ERROR\n')
+                    #          f.write('{0} occupied: {1}, {2} \n'.format(bitem['unit_type'], bitem['occupied'], citem['occupied']))
+                    #          if bitem['unoccupied'] != citem['unoccupied']: f.write('ERROR\n')
+                    #          f.write('{0} unoccupied: {1}, {2} \n'.format(bitem['unit_type'], bitem['unoccupied'], citem['unoccupied'])) 
                     
                     if not (ordered(bjson) == ordered(cjson)):
                         print "Equal: FALSE: " + burl
                         f.write("Equal: FALSE: " + burl + "\n")
-                        if type != 'housing':
-                            f.write("---------------------------------------------------\n")
-                            f.write("BASE JSON: " + str(bjson) + "\n")
-                            f.write("COMP JSON: " + str(cjson) + "\n")
-                            f.write("---------------------------------------------------\n\n")
+                        #if type != 'housing':
+                        f.write("---------------------------------------------------\n")
+                        f.write("BASE JSON: " + str(bjson) + "\n")
+                        f.write("COMP JSON: " + str(cjson) + "\n")
+                        f.write("---------------------------------------------------\n\n")
                     
                     f.flush()
                     os.fsync(f.fileno())

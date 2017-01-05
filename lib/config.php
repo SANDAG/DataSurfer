@@ -1,5 +1,5 @@
 <?php
-define('API_URL',"http://datasurfer.sandag.org/api");
+define('API_URL',"http://localhost:81/api");
 
 define('EMAIL_CONTACT',"datasurfer@sandag.org");
 define("SMTP_HOST", "mail.datasurfer.sandag.org.gerbera.arvixe.com");

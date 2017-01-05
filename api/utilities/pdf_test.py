@@ -18,7 +18,7 @@ def get_status_code(host, path):
     except StandardError:
         return None
 
-host = 'http://datasurfer.sandag.org'
+host = 'http://datasurfer-dev.sandag.org'
 base_url = host + '/api'
 
 with open('e:/apps/datasurfer/api/utilities/pdf_test.log', 'w') as f:
