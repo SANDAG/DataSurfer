@@ -18,12 +18,12 @@ def get_status_code(host, path):
         return None
 
 
-base_url = 'http://datasurfer.sandag.org/api'
-host = 'http://datasurfer.sandag.org'
+base_url = 'http://datasurfer-dev.sandag.org/api'
+host = 'http://datasurfer-dev.sandag.org'
 
 with open('e:/apps/datasurfer/api/map_test.log', 'w') as f:
 
-	for datasource in ['forecast']: #'census','estimate','forecast']:
+	for datasource in ['census','estimate','forecast']:
 		response = urllib2.urlopen(base_url + '/' + datasource)
 		series_api = json.load(response)
 
@@ -39,7 +39,7 @@ with open('e:/apps/datasurfer/api/map_test.log', 'w') as f:
     
 				for zone in zone_api:
 					zone_id = zone[geo_id]
-					zone_path = '/api/' +datasource+ '/' +str(series_id)+'/'+ str(geo_id)+ '/' + str(zone_id) + '/map'	
+					zone_path = '/api/' +datasource+ '/' +str(series_id)+'/'+ str(geo_id)+ '/' + str(zone_id) + '/map/geojson'	
 					zone_path = zone_path.replace(' ','%20')
 					status = get_status_code(host[7:], zone_path)
 					if 200 == status:

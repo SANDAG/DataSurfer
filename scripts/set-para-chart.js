@@ -2861,9 +2861,9 @@ function loadDetailChartTwo(){
                                         str_name = key;
                                         str_color = colorHousingTypeCensus[str_name][0];
                                         occupieds.push(obj[key]);
-                                    } else {
-                                        str_name = "vacant";
-                                        str_color = colorHousingTypeCensus[str_name][0];
+                                    } else if (key == "unoccupied") {
+                                        str_name = key;
+                                        str_color = colorHousingTypeCensus["vacant"][0];
                                         vacants.push(obj[key]);
                                     }
 
@@ -3728,7 +3728,7 @@ function loadDetailChartFive(){
                 console.log(request.responseText);
             }
         });
-        $('#txt_total_population').html('Median Household Income');
+        $('#txt_total_population').html('Median Household Income (2010$)');
         var url_media = $('#url_income').val()+"/median"
         $.ajax({
             url:api_url,

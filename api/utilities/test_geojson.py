@@ -5,7 +5,7 @@ import sys
 import time
 import urllib2
 
-base_url = 'http://localhost:81/api'
+base_url = 'http://datasurfer-dev.sandag.org/api'
 
 def ordered(obj):
     if isinstance(obj, dict):

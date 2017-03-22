@@ -11,6 +11,8 @@ def get_status_code(host, path):
         None instead.
     """
     try:
+        print host
+        print path
         conn = httplib.HTTPConnection(host)
         conn.request("GET", path)
         r = conn.getresponse()

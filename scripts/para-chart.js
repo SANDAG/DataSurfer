@@ -529,7 +529,7 @@ var para_detail_housing = {
             var index = keys_housing.indexOf(this.y);
             var num = (this.y / sum_key_housing) * 100;
             var num_occupied = (occupieds_housing[index] / sum_key_housing) * 100;
-            var num_vacant = (vacants_housing[index] / sum_key_housing) * 100;
+            var num_vacant = (vacants_housing[index] / this.y) * 100;
             var str = this.point.name;
             var val = Highcharts.numberFormat(num, 1);
             var val_num_occupied = Highcharts.numberFormat(num_occupied, 1);
@@ -544,8 +544,8 @@ var para_detail_housing = {
                 capitalized="Mulitiple Family";
             }
             var str_tooltip = "";
-            str_tooltip = capitalized + '<br>Total: <b>' + val + '% <b>';
-            str_tooltip += "<br>Occupied: <b>" + val_num_occupied + "%<b>";
+            str_tooltip = capitalized + '<br>Total: <b>' + Highcharts.numberFormat(this.y, 0,".",",") + ' <b>';
+            str_tooltip += "<br>Occupied: <b>" + Highcharts.numberFormat(occupieds_housing[index], 0,".",",") + "<b>";
             str_tooltip += "<br>Vacant: <b>" + val_num_vacant + "%<b>";
             return str_tooltip;
         },

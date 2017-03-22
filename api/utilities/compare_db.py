@@ -17,7 +17,7 @@ def ordered(obj):
 
 with open('e:/apps/datasurfer/api/utilities/console.log', 'w') as f:
 
-  for datasource in ['census']: #['estimate', 'census', 'forecast']:
+  for datasource in ['estimate', 'census', 'forecast']:
     response = urllib2.urlopen('%s/%s' % (base_url, datasource))
     series_api = json.load(response)
 
