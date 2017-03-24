@@ -421,21 +421,24 @@ $app->get('/:datasource/:year/:geotype/all/export/xlsx', function ($datasource, 
                 )
     );
 
-    //*******INCOME*************
-    $incomeSql = "SELECT geozone as {$geotype}, yr, ordinal, income_group, households FROM fact.summary_income 
-            WHERE datasource_id = :datasource_id AND geotype = :geotype order by geozone, yr, ordinal;";
+    if("forecast"!=$datasource)
+    {
+        //*******INCOME*************
+        $incomeSql = "SELECT geozone as {$geotype}, yr, ordinal, income_group, households FROM fact.summary_income 
+                WHERE datasource_id = :datasource_id AND geotype = :geotype order by geozone, yr, ordinal;";
    
-    $writer->writeSheet(
-                Query::getInstance()->getResultAsArray($incomeSql, $datasource_id, $geotype, null),
-                'Income',
-                array(
-                    strtoupper($geotype) => 'string',
-                    'YEAR' => 'string',
-                    'ORDINAL' => 'integer',
-                    'INCOME GROUP' => 'string',
-                    'HOUSEHOLDS' => 'integer'
-                )
-    );
+        $writer->writeSheet(
+                    Query::getInstance()->getResultAsArray($incomeSql, $datasource_id, $geotype, null),
+                    'Income',
+                    array(
+                        strtoupper($geotype) => 'string',
+                        'YEAR' => 'string',
+                        'ORDINAL' => 'integer',
+                        'INCOME GROUP' => 'string',
+                        'HOUSEHOLDS' => 'integer'
+                    )
+        );
+    }
    
     if("forecast"==$datasource)
     {
@@ -658,23 +661,30 @@ $app->get('/:datasource/:year/:geotype/:zones+/export/xlsx', function ($datasour
             WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) order by geozone, yr, housing_type;";
             $populationArray = Query::getInstance()->getResultAsArray($populationSql, $datasource_id, $geotype, $zonelist);
             
-            //*******INCOME*************
-            $incomeHeader = array(
-                strtoupper($geotype) => 'string',
-                'YEAR' => 'string',
-                'ORDINAL' => 'integer',
-                'INCOME GROUP' => 'string',
-                'HOUSEHOLDS' => 'integer'
-                );
-            $incomeSql = "SELECT geozone, yr, ordinal, income_group, households FROM fact.summary_income 
-            WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) order by geozone, yr, ordinal;";
-            $incomeArray = Query::getInstance()->getResultAsArray($incomeSql, $datasource_id, $geotype, $zonelist);
-            
             $writer->writeSheet($ageArray, 'Age', $ageHeader);
             $writer->writeSheet($ethnicityArray, 'Ethnicity', $ethnicityHeader);
             $writer->writeSheet($housingArray, 'Housing', $housingHeader);
             $writer->writeSheet($populationArray, 'Population', $populationHeader);
-            $writer->writeSheet($incomeArray, 'Income', $incomeHeader);
+            
+            if("forecast"!=$datasource)
+            {
+                //*******INCOME*************
+                $incomeHeader = array(
+                    strtoupper($geotype) => 'string',
+                    'YEAR' => 'string',
+                    'ORDINAL' => 'integer',
+                    'INCOME GROUP' => 'string',
+                    'HOUSEHOLDS' => 'integer'
+                    );
+                $incomeSql = "SELECT geozone, yr, ordinal, income_group, households FROM fact.summary_income 
+                WHERE datasource_id = :datasource_id AND geotype = :geotype AND lower(geozone) = ANY(:zonelist) order by geozone, yr, ordinal;";
+                $incomeArray = Query::getInstance()->getResultAsArray($incomeSql, $datasource_id, $geotype, $zonelist);
+                
+                $writer->writeSheet($incomeArray, 'Income', $incomeHeader);
+            }
+            
+            
+            
             
             if("forecast"==$datasource)
             {
