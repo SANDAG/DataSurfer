@@ -134,7 +134,7 @@ $server = $_SERVER['HTTP_HOST'];
 			</ul>
             <h1>Area Mapping (GeoJSON)</h1>
             <p>The current version of Data Surfer uses a Slippy map to render the geographic boundaries of a zone. The map uses a Leaflet base map and a geojson API call to generate the zone shape.</p>
-            <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/estimate/2015/cpa/scripps%20reserve/map/geojson'>http://datasurfer-dev.sandag.org/api/estimate/2015/cpa/scripps%20reserve/map/geojson</a>
+            <a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/estimate/2015/cpa/scripps%20reserve/map/geojson'>http://<?php echo $_SERVER['HTTP_HOST']; ?>.sandag.org/api/estimate/2015/cpa/scripps%20reserve/map/geojson</a>
 			<h1>Area Map Images (Static)</h1>
 			<p>In case you need a context map image for your application, the API provides static map images of all geography zones included in the API.</p>
 			<a href='http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/estimate/2014/cpa/uptown/map'>http://<?php echo $_SERVER['HTTP_HOST']; ?>/api/estimate/2014/cpa/uptown/map</a><br/>
