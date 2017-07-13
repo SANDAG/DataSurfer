@@ -28,12 +28,10 @@ function callApi($url,$return=false){
     require 'lib/class.phpmailer.php';
     $mail = new PHPMailer;
  
-	// commented -- now use localhost
-    //$mail->isSMTP();                                      // Set mailer to use SMTP
+    $mail->isSMTP();                                      // Set mailer to use SMTP
     //$mail->Host = 'smtp.gmail.com';                       // Specify main and backup server
     $mail->Host = SMTP_HOST; 
-	//SMTPAuth commented out --not needed on localhost
-    //$mail->SMTPAuth = true;                               // Enable SMTP authentication
+  //  $mail->SMTPAuth = true;                               // Enable SMTP authentication
     //$mail->Username = 'syphua2@gmail.com';                   // SMTP username
     $mail->Username =SMTP_USERNAME;  
     //$mail->Password = 'consokhong';               // SMTP password
