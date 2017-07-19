@@ -7,3 +7,5 @@ download/
 api/utilities/*.csv
 *.log
 *.json
+api/utilities/updates/**/*.csv
+mod/*
