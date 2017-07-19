@@ -107,25 +107,22 @@ $app->get('/:datasource/:year/:geotype', function ($datasource, $series, $geotyp
     $response = Query::getInstance()->getZonesAsJson($series_id, $geotype);
     $json = json_decode($response, true);
     if ($response == 'false') $app->halt(400, 'Invalid request parameters');
-    
+
     if ($geotype == 'unified' and ($series == 13 or $series == 2010))
     {
         $unset_queue = array();
-
         foreach ( $json as $i=>$item )
         {
-
-            if ($item == "bonsall")
+            if ($item["unified"] == "bonsall")
             {
-
                 $unset_queue[] = $i;
             }
         }
 
         foreach ( $unset_queue as $index )
         {
-            echo $index;
             unset($json[$index]);
+			$json = array_values($json);
         }
     }
     
