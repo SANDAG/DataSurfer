@@ -12,12 +12,16 @@ folder_path = r'E:\Apps\DataSurfer\api\pdf\forecast\12'
 
 c = canvas.Canvas('rect.pdf')
 c.setFillColor(white)
-#c.rect(255,200,310,150, fill=True, stroke=False) #Series 13 Rectangle
-c.rect(240,170,340,180, fill=True, stroke=False) #Series 12 Rectangle
+#Series 12
+c.rect(10,180,575,198, fill=True, stroke=False) #Series 13 Rectangle: Region AND Tract
+
+#Series 13
+#c.rect(10,180,555,195, fill=True, stroke=False) #Series 13 Rectangle: Region AND Tract
+#c.rect(10,180,555,210, fill=True, stroke=False) #Series 13 Rectangle: Not Region, Tract
+
 c.setFillColor(black)
 c.setFontSize(size=10.0)
-c.drawString(280, 300, "SANDAG temporarily has removed income forecasts")
-c.drawString(280, 290, "due to errors in the income input data.")
+c.drawString(180, 290, "Income Forecast Under Review")
 c.save()
 
 new_pdf = PdfFileReader(file('rect.pdf', 'rb'))

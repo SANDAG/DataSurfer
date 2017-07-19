@@ -206,7 +206,7 @@ $page_title="SANDAG Data Surfer | Data Overview";
 										<?php if($source_type=='forecast') { ?>
 										<div class="col-xs-12 col-sm-6">
 											<div class="chart-item">
-												<h4>household income</h4>
+												<h4>household income (data under review)</h4>
 												<div class="chart-map">                                        	
 													<div id="chart-5" class="chart-frame"></div>
 													<a class="chart-icon" title="" href="javascript:void(0);" id="link_income" data-ajax="false"></a>

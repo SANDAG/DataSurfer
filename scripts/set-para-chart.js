@@ -3976,12 +3976,12 @@ function loadDetailChartFive(){
                 }
             },
             error: function(request, status, error) {
-                console.log($('#url_ethnicity').val());
+                console.log($('#url_income').val());
                 console.log(request.responseText);
             }
         });
         
         $('#header_label').html('<p>Select a section of the chart or a year to show or hide data. <br class="hidden-xs" />Use the chart icon to download the chart image only. </p>');
-        $('#chart_label').html('HOUSEHOLD INCOME');
+        $('#chart_label').html('HOUSEHOLD INCOME (Data Under Review)');
     }
 }

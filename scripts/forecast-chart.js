@@ -540,6 +540,7 @@ function chart4()
 }
 function chart5()
 {
+    
     $.ajax({
         url: api_url,
         type: "POST",
@@ -547,7 +548,7 @@ function chart5()
         data: {type_chart: "income", url_des: $('#url_income').val()},
         success: function(res) {
             if (res.length > 0) {
-               
+                console.log("HERE");
                 var categories = [];
                 var arr_year = [];
                 var arrData = [];
