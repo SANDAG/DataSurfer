@@ -1,26 +1,61 @@
 <?php
 require_once("lib/config.php");
 require_once("lib/function.php");
+require_once("lib/recaptchalib.php");
+
 $page_title = "SANDAG Data Surfer | Contact Us";
 $isSend = false;
+$recaptchaChk = true;
+$privatekey = "6LejTScTAAAAAG9TPIWx1yqhxZGWvJLyJQRjwFCH";
+$response = null; // check secret key 
+
+$reCaptcha = new ReCaptcha($privatekey); // if submitted check response
 if (isset($_POST) && count($_POST) > 0) {
-    $subject = isset($_POST['txtSubject']) ? $_POST['txtSubject'] : '';
-    $name = isset($_POST['txtName']) ? $_POST['txtName'] : null;
-    $email = isset($_POST['txtEmail']) ? $_POST['txtEmail'] : '';
-    $message = isset($_POST['txtMessage']) ? wordwrap($_POST['txtMessage'], 70) : null;
-    if(sendMail($email, $name, EMAIL_CONTACT, $subject, $message )) {
-        $isSend = true;
-        echo json_encode(array('result'=>1));
-    }else{
-        echo json_encode(array('result'=>0));
-    }
-    exit();
+	if ($_POST["g-recaptcha-response"]) {    
+		$response = $reCaptcha->verifyResponse( $_SERVER["REMOTE_ADDR"],  $_POST["g-recaptcha-response"]    ); 
+ 
+		if ($response != null && $response->success) {  
+		  $recaptchaChk = true;
+		 
+				$subject = isset($_POST['txtSubject']) ? $_POST['txtSubject'] : '';
+				$name = isset($_POST['txtName']) ? $_POST['txtName'] : null;
+				$email = isset($_POST['txtEmail']) ? $_POST['txtEmail'] : '';
+				$message = isset($_POST['txtMessage']) ? wordwrap($_POST['txtMessage'], 70) : null;
+				if(sendMail($email, $name, EMAIL_CONTACT, $subject, $message )) {
+					
+					$isSend = true;
+					?>
+		<script>$('#completed').removeClass("hide");
+	                    //debugger;
+		$('#button_change').html('<a title="" href="/" target="_self" class="btn btn-green btn-link" data-ajax="false"><span class="glyphicon glyphicon-pre"></span> data surfer home</a>');
+	    </script>   
+		<?php 
+					//echo json_encode(array('result'=>1));
+				}else{
+					//echo json_encode(array('result'=>0));
+				}
+				//exit();
+		} 
+		else{ //recaptcha failed
+				 echo '<h2>Wrong captcha try again please!</h2>';
+		}
+	}
+	else{
+		$recaptchaChk = false;
+		?>
+		<script>$('#recaptchaChk').removeClass("hide");
+		 </script>   
+		<?php 
+		//echo '<h2>Click recaptcha!</h2>';
+	}
 }
+
 ?><!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/master.dwt" codeOutsideHTMLIsLocked="false" -->
 <?php
 include("head.php");
 ?>
+<script src='https://www.google.com/recaptcha/api.js' async defer></script>
 <body>
 
 	<!-- .st-container -->
@@ -85,7 +120,7 @@ include("head.php");
 											<p>Feel free to contact us! Send us an email by completing the form below.</p>
 										</div>
 									</div> 
-									<form id="contactForm" method="post" action="#">
+									<form id="contactusForm" method="post" action="#">
 										<fieldset class="contact-fieldset">
 											<div class="row">
 												<div class="col-xs-offset-1 col-xs-10 col-sm-2">
@@ -118,6 +153,13 @@ include("head.php");
 												<div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-5">
 													<textarea onblur="if (this.placeholder=='') this.placeholder = 'Type your message here (400 character max)'" onfocus="if (this.placeholder=='Type your message here (400 character max)') this.placeholder = ''" name="txtMessage" id="txtMessage" cols="" rows="" maxlength="400" placeholder="Type your message here (400 character max)" required class="form-control"></textarea>
 												</div>
+											</div>
+											<!-- recaptcha -->
+											<div class="row captcha_wrapper">
+												<div id="recaptchaChk" class="col-xs-offset-1 col-xs-10 col-sm-offset-3 col-sm-5 intro-section <?php echo ($recaptchaChk)? 'hide':'' ?>">
+													<p>Please check reCAPTCHA</p>
+												</div>
+											<div class="col-xs-offset-1 col-xs-8 col-sm-offset-3 col-sm-4 col-md-3 g-recaptcha" data-sitekey="6LejTScTAAAAAL_73uqwGQUDSrxeGpAUyr9esCOH"></div>
 											</div>
 											<div class="row">
 												<div id="button_change" class="col-xs-offset-1 col-xs-8 col-sm-offset-3 col-sm-4 col-md-3">
