@@ -43,7 +43,7 @@ if (isset($_POST) && count($_POST) > 0) {
 	else{
 		$recaptchaChk = false;
 		?>
-		<script>$('#recaptchaChk').removeClass("hide");
+		<script>$('#recaptchaChkDiv').removeClass("hide");
 		 </script>   
 		<?php 
 		//echo '<h2>Click recaptcha!</h2>';
@@ -156,7 +156,7 @@ include("head.php");
 											</div>
 											<!-- recaptcha -->
 											<div class="row captcha_wrapper">
-												<div id="recaptchaChk" class="col-xs-offset-1 col-xs-10 col-sm-offset-3 col-sm-5 intro-section <?php echo ($recaptchaChk)? 'hide':'' ?>">
+												<div id="recaptchaChkDiv" class="col-xs-offset-1 col-xs-10 col-sm-offset-3 col-sm-5 intro-section <?php echo ($recaptchaChk)? 'hide':'' ?>">
 													<p>Please check reCAPTCHA</p>
 												</div>
 											<div class="col-xs-offset-1 col-xs-8 col-sm-offset-3 col-sm-4 col-md-3 g-recaptcha" data-sitekey="6LejTScTAAAAAL_73uqwGQUDSrxeGpAUyr9esCOH"></div>
