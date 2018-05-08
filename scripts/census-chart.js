@@ -839,8 +839,8 @@ function chartCensus5() {
                     para_over_language.tooltip.style.fontSize = font_size_tool_tip;
                     if (window_width < 768) {
                         var flag_education = false;
-                        var flag_housing = false;
-                        var flag_age = false;
+                        var flag_employmentstatus = false;
+                        var flag_transportation = false;
                         var flag_language = false;
                         $('#loading-section').addClass("hide");
                         $('.site-header').css({ "z-index": '' });
@@ -848,10 +848,10 @@ function chartCensus5() {
 
                         var education = $('#chart-1');
                         var educationHeight = education.offset().top;
-                        var housing = $('#chart-2');
-                        var housingHeight = housing.offset().top;
-                        var age = $('#chart-4');
-                        var ageHeight = age.offset().top;
+                        var employmentstatus = $('#chart-2');
+                        var employmentstatusHeight = employmentstatus.offset().top;
+                        var transportation = $('#chart-4');
+                        var transportationHeight = transportation.offset().top;
                         var language = $('#chart-5');
                         var languageHeight = language.offset().top;
                         if (isMobile.any()) {
