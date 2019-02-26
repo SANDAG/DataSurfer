@@ -1,7 +1,7 @@
 # Demographic Warehouse Database
 # Del Esposo, Data Dude 01/17/2019
 
-This document is to guide the user on hohw to re-create the demographic_warehouse database from scratch given the data source is from existing data.
+This document is to guide the user on how to re-create the demographic_warehouse database from scratch given the data source is from existing data.
 
 Github Directory: https://github.com/SANDAG/ABM/tree/master/sql/data_structure/demographic_datawarehouse
 Branch: demographic_datawarehouse
