@@ -1,9 +1,0 @@
-*.buildpath
-*.project
-api/.settings/
-*.ini
-.idea
-download/
-api/utilities/*.csv
-*.log
-*.json
